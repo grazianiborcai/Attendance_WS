@@ -27,6 +27,8 @@ import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.OAuthTokenCredential;
 import com.paypal.base.rest.PayPalRESTException;
 
+//Testanto segundo commit
+
 @Path("/PaymentTest")
 public class PaymentoTest {
 
