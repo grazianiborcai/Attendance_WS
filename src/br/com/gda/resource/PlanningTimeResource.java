@@ -74,10 +74,11 @@ public class PlanningTimeResource {
 			@QueryParam("group") List<Integer> group, @QueryParam("weekday") List<Integer> weekday,
 			@QueryParam("codMaterial") List<Integer> codMaterial, @QueryParam("recordMode") List<String> recordMode,
 			@QueryParam("reservedTo") List<String> reservedTo, @QueryParam("codCustomer") List<Long> codCustomer,
-			@QueryParam("number") List<Long> number) {
+			@QueryParam("number") List<Long> number, @QueryParam("iniDate") String iniDate,
+			@QueryParam("finDate") String finDate) {
 
 		Response response = new PlanningTimeModel().selectPlanningTimeResponse(codOwner, codStore, codEmployee,
-				beginDate, beginTime, group, weekday, codMaterial, recordMode, reservedTo, codCustomer, number);
+				beginDate, beginTime, group, weekday, codMaterial, recordMode, reservedTo, codCustomer, number, iniDate, finDate);
 
 		return response;
 	}

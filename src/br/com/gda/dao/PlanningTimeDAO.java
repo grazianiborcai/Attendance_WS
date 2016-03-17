@@ -249,7 +249,7 @@ public class PlanningTimeDAO extends ConnectionBD {
 	public ArrayList<PlanningTime> selectPlanningTime(List<Long> codOwner, List<Integer> codStore,
 			List<Integer> codEmployee, List<String> beginDate, List<String> beginTime, List<Integer> group,
 			List<Integer> weekday, List<Integer> codMaterial, List<String> recordMode, List<String> reservedTo,
-			List<Long> codCustomer, List<Long> number) throws SQLException {
+			List<Long> codCustomer, List<Long> number, String iniDate, String finDate) throws SQLException {
 
 		ArrayList<PlanningTime> planningTimeList = new ArrayList<PlanningTime>();
 		Connection conn = null;
@@ -266,7 +266,7 @@ public class PlanningTimeDAO extends ConnectionBD {
 
 			selectStmt = conn.prepareStatement(
 					planningTimeHelper.prepareSelect(codOwner, codStore, codEmployee, beginDate, beginTime, group,
-							weekday, codMaterial, recordMode, reservedTo, codCustomer, number, dateTime.toString()));
+							weekday, codMaterial, recordMode, reservedTo, codCustomer, number, dateTime.toString(), iniDate, finDate));
 
 			resultSet = selectStmt.executeQuery();
 

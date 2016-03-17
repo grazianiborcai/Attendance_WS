@@ -46,7 +46,7 @@ public class PlanningTimeModel extends JsonBuilder {
 		recordMode.add(RecordMode.RECORD_OK);
 
 		jsonObject = mergeJsonObject(jsonObject, selectPlanningTimeJson(codOwner, codStore, null, null, null, null,
-				null, null, recordMode, null, null, null));
+				null, null, recordMode, null, null, null, null, null));
 
 		return response(jsonObject);
 	}
@@ -94,10 +94,10 @@ public class PlanningTimeModel extends JsonBuilder {
 	public ArrayList<PlanningTime> selectPlanningTime(List<Long> codOwner, List<Integer> codStore,
 			List<Integer> codEmployee, List<String> beginDate, List<String> beginTime, List<Integer> group,
 			List<Integer> weekday, List<Integer> codMaterial, List<String> recordMode, List<String> reservedTo,
-			List<Long> codCustomer, List<Long> number) throws SQLException {
+			List<Long> codCustomer, List<Long> number, String iniDate, String finDate) throws SQLException {
 
 		ArrayList<PlanningTime> planningTime = new PlanningTimeDAO().selectPlanningTime(codOwner, codStore, codEmployee,
-				beginDate, beginTime, group, weekday, codMaterial, recordMode, reservedTo, codCustomer, number);
+				beginDate, beginTime, group, weekday, codMaterial, recordMode, reservedTo, codCustomer, number, iniDate, finDate);
 
 		Predicate<PlanningTime> predicateDM = new Predicate<PlanningTime>() {
 
@@ -140,7 +140,7 @@ public class PlanningTimeModel extends JsonBuilder {
 	public JsonObject selectPlanningTimeJson(List<Long> codOwner, List<Integer> codStore, List<Integer> codEmployee,
 			List<String> beginDate, List<String> beginTime, List<Integer> group, List<Integer> weekday,
 			List<Integer> codMaterial, List<String> recordMode, List<String> reservedTo, List<Long> codCustomer,
-			List<Long> number) {
+			List<Long> number, String iniDate, String finDate) {
 
 		JsonElement jsonElement = new JsonArray().getAsJsonArray();
 		SQLException exception = new SQLException(RETURNED_SUCCESSFULLY, null, 200);
@@ -148,7 +148,7 @@ public class PlanningTimeModel extends JsonBuilder {
 		try {
 
 			jsonElement = new Gson().toJsonTree(selectPlanningTime(codOwner, codStore, codEmployee, beginDate,
-					beginTime, group, weekday, codMaterial, recordMode, reservedTo, codCustomer, number));
+					beginTime, group, weekday, codMaterial, recordMode, reservedTo, codCustomer, number, iniDate, finDate));
 
 		} catch (SQLException e) {
 			exception = e;
@@ -162,10 +162,10 @@ public class PlanningTimeModel extends JsonBuilder {
 	public Response selectPlanningTimeResponse(List<Long> codOwner, List<Integer> codStore, List<Integer> codEmployee,
 			List<String> beginDate, List<String> beginTime, List<Integer> group, List<Integer> weekday,
 			List<Integer> codMaterial, List<String> recordMode, List<String> reservedTo, List<Long> codCustomer,
-			List<Long> number) {
+			List<Long> number, String iniDate, String finDate) {
 
 		return response(selectPlanningTimeJson(codOwner, codStore, codEmployee, beginDate, beginTime, group, weekday,
-				codMaterial, recordMode, reservedTo, codCustomer, number));
+				codMaterial, recordMode, reservedTo, codCustomer, number, iniDate, finDate));
 	}
 
 	public ArrayList<PlanningTime> getCart(Long codCustomer) throws SQLException {

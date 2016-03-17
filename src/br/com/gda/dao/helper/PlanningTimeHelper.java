@@ -78,7 +78,7 @@ public class PlanningTimeHelper extends GdaDB {
 		// LocalTime endTime = beginTime.plusMinutes(min);
 
 		if (rate != 0) {
-			
+
 			planningTime = new PlanningTime();
 
 			planningTime.setCodOwner(resultSet.getLong(TABLE + "." + FIELD01));
@@ -87,10 +87,8 @@ public class PlanningTimeHelper extends GdaDB {
 			planningTime.setBeginDate(resultSet.getDate(TABLE + "." + FIELD04).toLocalDate());
 			if (from == GET_CART || from == GET_BOOKED) {
 				planningTime.setBeginTime(resultSet.getTime(TABLE + "." + FIELD06).toLocalTime());
-				planningTime.setCodMaterial(
-						resultSet.getInt(TABLE + "." + FIELD08));
-			}
-			else {
+				planningTime.setCodMaterial(resultSet.getInt(TABLE + "." + FIELD08));
+			} else {
 				planningTime.setBeginTime(resultSet.getTime(TABLE + "." + FIELD05).toLocalTime());
 				planningTime.setCodMaterial(
 						resultSet.getInt(EmployeeMaterialHelper.TABLE + "." + EmployeeMaterialHelper.FIELD04));
@@ -132,17 +130,24 @@ public class PlanningTimeHelper extends GdaDB {
 	public String prepareSelect(List<Long> codOwner, List<Integer> codStore, List<Integer> codEmployee,
 			List<String> beginDate, List<String> beginTime, List<Integer> group, List<Integer> weekday,
 			List<Integer> codMaterial, List<String> recordMode, List<String> reservedTo, List<Long> codCustomer,
-			List<Long> number, String dateTime) {
+			List<Long> number, String dateTime, String iniDate, String finDate) {
 
 		String stmt = ST_SELECT;
 
-		stmt = prepareWhereClause(stmt, preparePlanningTimeWhere(codOwner, codStore, codEmployee, beginDate, beginTime,
-				group, weekday, codMaterial, recordMode, reservedTo, codCustomer, number));
+		if (iniDate != null || finDate != null)
+			stmt = prepareWhereClause(stmt, preparePlanningTimeWhere(codOwner, codStore, codEmployee, null,
+					beginTime, group, weekday, codMaterial, recordMode, reservedTo, codCustomer, number));
+		else
+			stmt = prepareWhereClause(stmt, preparePlanningTimeWhere(codOwner, codStore, codEmployee, beginDate,
+					beginTime, group, weekday, codMaterial, recordMode, reservedTo, codCustomer, number));
 
 		if (!stmt.equals(ST_SELECT))
 			stmt = stmt + " AND ";
 		else
 			stmt = stmt + " WHERE ";
+		
+		if (iniDate != null || finDate != null)
+			stmt = stmt + FIELD04 + " >= '" + iniDate + "' AND " + FIELD04 + " <= '" + finDate + "' AND ";
 
 		stmt = stmt + FIELD12 + " < '" + dateTime + "' AND ( " + FIELD09 + " = '" + RecordMode.RECORD_OK + "' OR "
 				+ FIELD09 + " = '" + RecordMode.ISRESERVED + "' )";
