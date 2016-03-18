@@ -1,5 +1,8 @@
 package br.com.gda.resource;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.security.Security;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -13,6 +16,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 
 import com.google.gson.JsonObject;
 import com.paypal.api.payments.Amount;
@@ -38,112 +47,157 @@ public class PaymentoTest {
 	@Path(GET_TIME)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response selectTime() {
-		
-		Map<String, String> sdkConfig = new HashMap<String, String>();
-		sdkConfig.put("mode", "sandbox");
 
-		String accessToken = null;
+//		Map<String, String> sdkConfig = new HashMap<String, String>();
+//		sdkConfig.put("mode", "sandbox");
+//
+//		String accessToken = null;
+//
+//		Payment createdPayment = null;
+//		try {
+//			accessToken = new OAuthTokenCredential(
+//					"AfwtOtnV9Mef9qHO3WmF57KaaCUn_OdPUYPcjcrsoL9Y9JVF0ojF3lbITPi3m73ebBc1S5b268ibxFwZ",
+//					"EJoNhe0jZQHEgT8fwEeTUJMLF9IQigwdjwHmYpBTF4OTB7oimIv4QtfGQhkZWEY_lyY98R0a586G-uLo", sdkConfig)
+//							.getAccessToken();
+//
+//			APIContext apiContext = new APIContext(accessToken);
+//			apiContext.setConfigurationMap(sdkConfig);
+//
+//			CreditCard creditCard = new CreditCard();
+//			creditCard.setType("visa");
+//			creditCard.setNumber("4446283280247004");
+//			creditCard.setExpireMonth(11);
+//			creditCard.setExpireYear(2018);
+//			creditCard.setFirstName("Joe");
+//			creditCard.setLastName("Shopper");
+//			// CreditCard createdCreditCard = creditCard.create(apiContext);
+//
+//			// CreditCardToken creditCardToken = new CreditCardToken();
+//			// creditCardToken.setCreditCardId(createdCreditCard.getId());
+//
+//			FundingInstrument fundingInstrument = new FundingInstrument();
+//			// fundingInstrument.setCreditCardToken(creditCardToken);
+//			fundingInstrument.setCreditCard(creditCard);
+//
+//			List<FundingInstrument> fundingInstrumentList = new ArrayList<FundingInstrument>();
+//			fundingInstrumentList.add(fundingInstrument);
+//
+//			Amount amount = new Amount();
+//			amount.setCurrency("BRL");
+//			amount.setTotal("12");
+//
+//			Transaction transaction = new Transaction();
+//			transaction.setDescription("creating a payment");
+//			transaction.setAmount(amount);
+//
+//			List<Transaction> transactions = new ArrayList<Transaction>();
+//			transactions.add(transaction);
+//
+//			Payer payer = new Payer();
+//			payer.setFundingInstruments(fundingInstrumentList);
+//			payer.setPaymentMethod("credit_card");
+//
+//			Payment payment = new Payment();
+//			payment.setIntent("sale");
+//			payment.setPayer(payer);
+//			payment.setTransactions(transactions);
+//
+//			createdPayment = payment.create(apiContext);
+//		} catch (PayPalRESTException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+
+		CloseableHttpClient httpClient = HttpClients.createDefault();
+		HttpGet httpGet = new HttpGet("https://sandbox.moip.com.br/v2/customers/CUS-XALXPTOGIZM6");
+		httpGet.addHeader("Content-Type", "application/json");
+		httpGet.addHeader("Authorization",
+				"Basic OFFMVjNUT1hJUDBBTkQxNVpPQjVSNFg1VDBPWVdIVlI6R0xZR0dDSFRTRVFPMExDVUw5SUpOUVRFR05HMk5aT0hBNTNWUkdZQw==");
+
+		CloseableHttpResponse httpResponse;
 		
-		Payment createdPayment = null;
+		StringBuffer response = new StringBuffer();
 		try {
-			accessToken = new OAuthTokenCredential("AfwtOtnV9Mef9qHO3WmF57KaaCUn_OdPUYPcjcrsoL9Y9JVF0ojF3lbITPi3m73ebBc1S5b268ibxFwZ", "EJoNhe0jZQHEgT8fwEeTUJMLF9IQigwdjwHmYpBTF4OTB7oimIv4QtfGQhkZWEY_lyY98R0a586G-uLo", sdkConfig).getAccessToken();
+			httpResponse = httpClient.execute(httpGet);
+
+//			System.out.println("GET Response Status:: " + httpResponse.getStatusLine().getStatusCode());
+
+			BufferedReader reader = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
+
+			String inputLine;
 			
-			APIContext apiContext = new APIContext(accessToken);
-			apiContext.setConfigurationMap(sdkConfig);
-			
-			CreditCard creditCard = new CreditCard();
-			creditCard.setType("visa");
-			creditCard.setNumber("4446283280247004");
-			creditCard.setExpireMonth(11);
-			creditCard.setExpireYear(2018);
-			creditCard.setFirstName("Joe");
-			creditCard.setLastName("Shopper");
-//			CreditCard createdCreditCard = creditCard.create(apiContext);
-			
-//			CreditCardToken creditCardToken = new CreditCardToken();
-//			creditCardToken.setCreditCardId(createdCreditCard.getId());
 
-			FundingInstrument fundingInstrument = new FundingInstrument();
-//			fundingInstrument.setCreditCardToken(creditCardToken);
-			fundingInstrument.setCreditCard(creditCard);
+			while ((inputLine = reader.readLine()) != null) {
+				response.append(inputLine);
+			}
+			reader.close();
 
-			List<FundingInstrument> fundingInstrumentList = new ArrayList<FundingInstrument>();
-			fundingInstrumentList.add(fundingInstrument);
+			// print result
+//			System.out.println(response.toString());
+			httpClient.close();
 
-			Amount amount = new Amount();
-			amount.setCurrency("BRL");
-			amount.setTotal("12");
-
-			Transaction transaction = new Transaction();
-			transaction.setDescription("creating a payment");
-			transaction.setAmount(amount);
-
-			List<Transaction> transactions = new ArrayList<Transaction>();
-			transactions.add(transaction);
-
-			Payer payer = new Payer();
-			payer.setFundingInstruments(fundingInstrumentList);
-			payer.setPaymentMethod("credit_card");
-
-			Payment payment = new Payment();
-			payment.setIntent("sale");
-			payment.setPayer(payer);
-			payment.setTransactions(transactions);
-
-			createdPayment = payment.create(apiContext);
-		} catch (PayPalRESTException e) {
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
 
-		JsonObject jsonObject = new JsonObject();
-		jsonObject.addProperty("zoneId", "Created payment with id = " + createdPayment.getId()
-		+ " and status = " + createdPayment.getState());
-		jsonObject.addProperty("time", ZonedDateTime.now(ZoneId.of("Z")).toLocalDateTime().toString());
-//		
-//		final String PUBLIC_KEY = "-----BEGIN PUBLIC KEY-----\n"+
-//		        "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAp/A2eCh7W+gxbYXLFR8D\n"+
-//		        "aTEDZDONK87zKclPPewICYYBBIFEuDqLe+RNvkgXSPjYmkTvd3ENcD24edHAvh9j\n"+
-//		        "7a+qDlLtnQ6LRhb8Uj+S/oVQHAkfeN/BsKGoTrJb2/mQFNtk0ZwZTo4jXZ3htZiG\n"+
-//		        "GCpGs/VNTVpVcGvjMq1YMlwhyC9J8S3B/h0ycPlbpJg8l7nBm0d1vJcupHVcbXQn\n"+
-//		        "0S5PaLbwFq2rLAsgJRGmbjtgfqKWX6yQeeN8aoS1gZb77QWXSGL+k1adaDACX0Cs\n"+
-//		        "dFWT7A2FlXmTT5YsB+LE2FodnyfHWMSAW606f7bFteFQdyITD8VWsgk1oS1KvabW\n"+
-//		        "8QIDAQAB\n"+
-//		        "-----END PUBLIC KEY-----";
-//		
-//		
-//		
-//		
-//		
-//		
-//		
-//		
-//		
-//		
-//		CreditCard creditCard = new CreditCard();
-//        creditCard.setCvc("123");
-//        creditCard.setNumber("4340948565343648");
-//        creditCard.setExpirationMonth("12");
-//        creditCard.setExpirationYear("2030");
-//        creditCard.setPublicKey(PUBLIC_KEY);
-//        
-//        String hash = null;
-//        
-//        Security.addProvider(new BouncyCastleProvider());
-//        
-//        try{
-//            hash = creditCard.encrypt();
-//        }catch(MoipEncryptionException mee){
-//
-//        }
-//		
 //		JsonObject jsonObject = new JsonObject();
-//		jsonObject.addProperty("zoneId", hash);
+//		jsonObject.addProperty("zoneId",
+//				"Created payment with id = " + createdPayment.getId() + " and status = " + createdPayment.getState());
 //		jsonObject.addProperty("time", ZonedDateTime.now(ZoneId.of("Z")).toLocalDateTime().toString());
-//
-		return Response.status(Response.Status.OK).entity(jsonObject.toString()).type(MediaType.APPLICATION_JSON)
+		
+		
+		
+		//
+		// final String PUBLIC_KEY = "-----BEGIN PUBLIC KEY-----\n"+
+		// "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAp/A2eCh7W+gxbYXLFR8D\n"+
+		// "aTEDZDONK87zKclPPewICYYBBIFEuDqLe+RNvkgXSPjYmkTvd3ENcD24edHAvh9j\n"+
+		// "7a+qDlLtnQ6LRhb8Uj+S/oVQHAkfeN/BsKGoTrJb2/mQFNtk0ZwZTo4jXZ3htZiG\n"+
+		// "GCpGs/VNTVpVcGvjMq1YMlwhyC9J8S3B/h0ycPlbpJg8l7nBm0d1vJcupHVcbXQn\n"+
+		// "0S5PaLbwFq2rLAsgJRGmbjtgfqKWX6yQeeN8aoS1gZb77QWXSGL+k1adaDACX0Cs\n"+
+		// "dFWT7A2FlXmTT5YsB+LE2FodnyfHWMSAW606f7bFteFQdyITD8VWsgk1oS1KvabW\n"+
+		// "8QIDAQAB\n"+
+		// "-----END PUBLIC KEY-----";
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		// CreditCard creditCard = new CreditCard();
+		// creditCard.setCvc("123");
+		// creditCard.setNumber("4340948565343648");
+		// creditCard.setExpirationMonth("12");
+		// creditCard.setExpirationYear("2030");
+		// creditCard.setPublicKey(PUBLIC_KEY);
+		//
+		// String hash = null;
+		//
+		// Security.addProvider(new BouncyCastleProvider());
+		//
+		// try{
+		// hash = creditCard.encrypt();
+		// }catch(MoipEncryptionException mee){
+		//
+		// }
+		//
+		// JsonObject jsonObject = new JsonObject();
+		// jsonObject.addProperty("zoneId", hash);
+		// jsonObject.addProperty("time",
+		// ZonedDateTime.now(ZoneId.of("Z")).toLocalDateTime().toString());
+		//
+
+//		return Response.status(Response.Status.OK).entity(jsonObject.toString()).type(MediaType.APPLICATION_JSON)
+//				.build();
+		
+		return Response.status(Response.Status.OK).entity(response.toString()).type(MediaType.APPLICATION_JSON)
 				.build();
 
 	}
