@@ -69,7 +69,7 @@ public class AuthFilter implements ContainerRequestFilter {
 				&& (!method.equals("POST") || !path.equals("Customer/insertCustomer"))
 				&& (!method.equals("GET") || !path.equals("CodePassword/getCode"))
 				&& (!method.equals("GET") || !path.equals("Customer/changePassword"))) {
-			throw new WebApplicationException(Status.UNAUTHORIZED);
+			throw new WebApplicationException(Status.BAD_GATEWAY);
 		}
 
 		// Check if the request is from a trusty client

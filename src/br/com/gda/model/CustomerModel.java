@@ -121,6 +121,7 @@ public class CustomerModel extends JsonBuilder {
 
 			if (customerList == null || customerList.size() == 0) {
 				throw new WebApplicationException(Status.UNAUTHORIZED);
+//				exception = new SQLException(email+" : "+password+" : "+emailList.get(0), null, 200);
 			}
 
 			jsonElement = new Gson().toJsonTree(customerList);

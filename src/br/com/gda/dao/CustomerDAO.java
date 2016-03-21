@@ -211,9 +211,14 @@ public class CustomerDAO extends ConnectionBD {
 			conn = getConnection();
 
 			CustomerHelper customerHelper = new CustomerHelper();
+			
+			String select = customerHelper.prepareSelect(codCustomer, phone, password, name,
+					codGender, cpf, bornDate, email, address1, address2, postalcode, city, country, state);
+			
+//			email.clear();
+//			email.add(select);
 
-			selectStmt = conn.prepareStatement(customerHelper.prepareSelect(codCustomer, phone, password, name,
-					codGender, cpf, bornDate, email, address1, address2, postalcode, city, country, state));
+			selectStmt = conn.prepareStatement(select);
 
 			resultSet = selectStmt.executeQuery();
 
