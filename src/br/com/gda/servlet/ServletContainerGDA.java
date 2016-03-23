@@ -81,6 +81,7 @@ public class ServletContainerGDA extends ServletContainer {
 //		String dbUser = USERNAME;
 //		String dbPassword = PASS_W;
 
+		
 		p.setUrl(dburl);
 		p.setDriverClassName(DRIVER);
 		p.setUsername(dbUser);
@@ -97,8 +98,8 @@ public class ServletContainerGDA extends ServletContainer {
 		p.setMaxWait(100);
 		p.setRemoveAbandonedTimeout(60);
 		p.setMinEvictableIdleTimeMillis(30000);
-		p.setMinIdle(0);
-		p.setMaxIdle(0);
+		p.setMinIdle(10);
+		p.setMaxIdle(50);
 		p.setLogAbandoned(true);
 		p.setRemoveAbandoned(true);
 		p.setJdbcInterceptors("org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;"

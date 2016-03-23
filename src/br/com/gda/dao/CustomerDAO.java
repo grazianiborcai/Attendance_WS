@@ -36,6 +36,8 @@ public class CustomerDAO extends ConnectionBD {
 			insertStmt.executeBatch();
 
 			conn.commit();
+			
+			conn.close();
 
 			return new SQLException(INSERT_OK, null, 200);
 

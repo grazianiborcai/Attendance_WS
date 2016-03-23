@@ -5,12 +5,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import javax.sql.DataSource;
 //import javax.naming.Context;
 //import javax.naming.InitialContext;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.tomcat.jdbc.pool.DataSource;
+//import org.apache.tomcat.jdbc.pool.DataSource;
 
 import br.com.gda.servlet.ServletContainerGDA;
 
@@ -564,6 +565,7 @@ public class ConnectionBD extends GdaDB {
 				stmt18 = null;
 			}
 			if (conn != null) {
+				conn.setAutoCommit(true);
 				conn.close();
 				conn = null;
 			}
