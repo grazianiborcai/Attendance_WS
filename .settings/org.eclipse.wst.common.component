@@ -6,6 +6,9 @@
         <dependent-module archiveName="agenda-metadata_lib-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/agenda-metadata_lib/agenda-metadata_lib">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="Moip-Mind5-SDK-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/Moip-Mind5-SDK/Moip-Mind5-SDK">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="java-output-path" value="/FastBar_WS/build/classes"/>
         <property name="context-root" value="Agenda_WS"/>
     </wb-module>
