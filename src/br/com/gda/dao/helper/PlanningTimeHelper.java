@@ -49,7 +49,7 @@ public class PlanningTimeHelper extends GdaDB {
 
 	public static final String ST_UP_RELEASE_ITEM = "UPDATE " + SCHEMA + "." + TABLE + " SET " + FIELD06 + "=?" + ", "
 			+ FIELD09 + "=?" + ", " + FIELD12 + "=?" + ", " + FIELD13 + "=?" + ", " + FIELD08 + "=?" + " WHERE "
-			+ FIELD01 + "=? AND " + FIELD02 + "=? AND " + FIELD03 + "=? AND " + FIELD04 + "=? AND " + FIELD05
+			+ FIELD01 + "=? AND " + FIELD02 + "=? AND " + FIELD03 + "=? AND " + FIELD04 + "=? AND " + FIELD06
 			+ "=? AND " + FIELD09 + " = '" + RecordMode.ISRESERVED + "' AND " + FIELD13 + "=?";
 
 	public static final String ST_DELETE = "DELETE FROM " + SCHEMA + "." + TABLE;
@@ -96,7 +96,7 @@ public class PlanningTimeHelper extends GdaDB {
 
 			// planningTime.setEndTime(endTime);
 
-			planningTime.setGroup(resultSet.getInt(TABLE + "." + FIELD06));
+//			planningTime.setGroup(resultSet.getInt(TABLE + "." + FIELD06));
 			planningTime.setWeekday(resultSet.getInt(TABLE + "." + FIELD07));
 			planningTime.setRecordMode(resultSet.getString(TABLE + "." + FIELD09));
 			planningTime.setPriceStore(resultSet.getBigDecimal(TABLE + "." + FIELD10));

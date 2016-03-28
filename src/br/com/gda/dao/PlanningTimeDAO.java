@@ -15,6 +15,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import br.com.gda.dao.helper.PlanningTimeHelper;
 import br.com.gda.dao.helper.ReserveHelper;
@@ -68,6 +69,8 @@ public class PlanningTimeDAO extends ConnectionBD {
 
 		Connection conn = null;
 		PreparedStatement updateStmtT01 = null;
+		PreparedStatement updateStmtT02 = null;
+		ConcurrentHashMap<Integer, Integer> timeMap = new ConcurrentHashMap<Integer, Integer>();
 
 		try {
 
@@ -75,10 +78,14 @@ public class PlanningTimeDAO extends ConnectionBD {
 			conn.setAutoCommit(false);
 
 			updateStmtT01 = conn.prepareStatement(PlanningTimeHelper.ST_UP_ALL_FIELD_BY_FULL_KEY);
+			// updateStmtT02 =
+			// conn.prepareStatement(PlanningTimeHelper.ST_UP_ALL_FIELD_BY_FULL_KEY);
 
 			LocalDateTime dateTime = ZonedDateTime.now(ZoneOffset.UTC).toLocalDateTime();
 			LocalDateTime dateTimePlus = ZonedDateTime.now(ZoneOffset.UTC).toLocalDateTime().plusMinutes(_10);
 
+			int z = 0;
+			int x = 0;
 			for (PlanningTime planningTime : planningTimeList) {
 
 				for (int i = 0; i < planningTime.getRate(); i++) {
@@ -86,6 +93,8 @@ public class PlanningTimeDAO extends ConnectionBD {
 					int min = part * i;
 					LocalTime beginTime = planningTime.getBeginTime().plusMinutes(min);
 
+					timeMap.put(x, z);
+					// if (i == 0) {
 					updateStmtT01.setTime(1, Time.valueOf(planningTime.getBeginTime()));
 					updateStmtT01.setInt(2, planningTime.getWeekday());
 					updateStmtT01.setInt(3, planningTime.getCodMaterial());
@@ -105,9 +114,38 @@ public class PlanningTimeDAO extends ConnectionBD {
 					updateStmtT01.setLong(16, codCustomer);
 
 					updateStmtT01.addBatch();
+					// } else {
+					// updateStmtT02.setTime(1,
+					// Time.valueOf(planningTime.getBeginTime()));
+					// updateStmtT02.setInt(2, planningTime.getWeekday());
+					// updateStmtT02.setInt(3, planningTime.getCodMaterial());
+					// updateStmtT02.setString(4, RecordMode.ISRESERVED);
+					// updateStmtT02.setBigDecimal(5,
+					// planningTime.getPriceStore());
+					// updateStmtT02.setString(6,
+					// planningTime.getCodCurrStore());
+					// updateStmtT02.setTimestamp(7,
+					// Timestamp.valueOf(dateTimePlus));
+					// updateStmtT02.setLong(8, codCustomer);
+					//
+					// updateStmtT02.setLong(9, planningTime.getCodOwner());
+					// updateStmtT02.setInt(10, planningTime.getCodStore());
+					// updateStmtT02.setInt(11, planningTime.getCodEmployee());
+					// updateStmtT02.setDate(12,
+					// Date.valueOf(planningTime.getBeginDate()));
+					// updateStmtT02.setTime(13, Time.valueOf(beginTime));
+					// updateStmtT02.setTimestamp(14,
+					// Timestamp.valueOf(dateTime));
+					// updateStmtT02.setTimestamp(15,
+					// Timestamp.valueOf(dateTime));
+					// updateStmtT02.setLong(16, codCustomer);
+					//
+					// updateStmtT02.addBatch();
+					// }
 
+					x++;
 				}
-
+				z++;
 			}
 
 			ArrayList<PlanningTime> planningTimeListAux1 = new ArrayList<PlanningTime>();
@@ -115,18 +153,21 @@ public class PlanningTimeDAO extends ConnectionBD {
 			PlanningTime planningTimeAux;
 
 			int[] returnCode = updateStmtT01.executeBatch();
+			// updateStmtT02.executeBatch();
 
 			for (int i = 0; i < returnCode.length; i++) {
+				// if (planningTimeList.size() > i) {
 				int j = returnCode[i];
 
 				if (j <= 0) {
-					planningTimeAux = planningTimeList.get(i);
-					if (planningTimeAux.getRecordMode().equals(RecordMode.ISNEW))
-						planningTimeListAux1.add(planningTimeAux);
-					else
+					planningTimeAux = planningTimeList.get(timeMap.get(i));
+					if (planningTimeAux.getRecordMode().equals(RecordMode.ISNEW)) {
+						if (!planningTimeListAux1.contains(planningTimeAux))
+							planningTimeListAux1.add(planningTimeAux);
+					} else if (!planningTimeListAux2.contains(planningTimeAux))
 						planningTimeListAux2.add(planningTimeAux);
 				}
-
+				// }
 			}
 
 			planningTimeList.clear();
@@ -134,15 +175,21 @@ public class PlanningTimeDAO extends ConnectionBD {
 			if (planningTimeListAux1.size() != 0 || planningTimeListAux2.size() != 0) {
 
 				// conn.rollback();
-				conn.commit();
+
+				SQLException exception = null;
 
 				if (planningTimeListAux1.size() != 0 && !error24) {
 					planningTimeList.addAll(planningTimeListAux1);
-					return new SQLException("Message erro", null, 23);
+					exception = new SQLException("Message erro", null, 23);
 				} else {
 					planningTimeList.addAll(planningTimeListAux2);
-					return new SQLException("Message erro", null, 24);
+					exception = new SQLException("Message erro", null, 24);
 				}
+
+				updateStmtT02 = releasePlanningTime(planningTimeList, codCustomer, conn);
+
+				conn.commit();
+				return exception;
 
 			} else {
 				conn.commit();
@@ -157,7 +204,7 @@ public class PlanningTimeDAO extends ConnectionBD {
 				return e1;
 			}
 		} finally {
-			closeConnection(conn, updateStmtT01);
+			closeConnection(conn, updateStmtT01, updateStmtT02);
 		}
 	}
 
@@ -171,31 +218,7 @@ public class PlanningTimeDAO extends ConnectionBD {
 			conn = getConnection();
 			conn.setAutoCommit(false);
 
-			updateStmtT01 = conn.prepareStatement(PlanningTimeHelper.ST_UP_RELEASE_ITEM);
-
-			for (PlanningTime planningTime : planningTimeList) {
-
-				for (int i = 0; i < planningTime.getRate(); i++) {
-					int part = planningTime.getPart();
-					int min = part * i;
-					LocalTime beginTime = planningTime.getBeginTime().plusMinutes(min);
-
-					updateStmtT01.setNull(1, Types.TIME);
-					updateStmtT01.setString(2, RecordMode.RECORD_OK);
-					updateStmtT01.setTimestamp(3, Timestamp.valueOf("1900-01-01 00:00:00"));
-					updateStmtT01.setNull(4, Types.BIGINT);
-					updateStmtT01.setNull(5, Types.BIGINT);
-
-					updateStmtT01.setLong(6, planningTime.getCodOwner());
-					updateStmtT01.setInt(7, planningTime.getCodStore());
-					updateStmtT01.setInt(8, planningTime.getCodEmployee());
-					updateStmtT01.setDate(9, Date.valueOf(planningTime.getBeginDate()));
-					updateStmtT01.setTime(10, Time.valueOf(beginTime));
-					updateStmtT01.setLong(11, codCustomer);
-
-					updateStmtT01.executeUpdate();
-				}
-			}
+			updateStmtT01 = releasePlanningTime(planningTimeList, codCustomer, conn);
 
 			conn.commit();
 
@@ -211,6 +234,39 @@ public class PlanningTimeDAO extends ConnectionBD {
 		} finally {
 			closeConnection(conn, updateStmtT01);
 		}
+	}
+
+	private PreparedStatement releasePlanningTime(ArrayList<PlanningTime> planningTimeList, Long codCustomer,
+			Connection conn) throws SQLException {
+
+		PreparedStatement updateStmtT01;
+		updateStmtT01 = conn.prepareStatement(PlanningTimeHelper.ST_UP_RELEASE_ITEM);
+
+		for (PlanningTime planningTime : planningTimeList) {
+
+			// for (int i = 0; i < planningTime.getRate(); i++) {
+			// int part = planningTime.getPart();
+			// int min = part * i;
+			// LocalTime beginTime =
+			// planningTime.getBeginTime().plusMinutes(min);
+
+			updateStmtT01.setNull(1, Types.TIME);
+			updateStmtT01.setString(2, RecordMode.RECORD_OK);
+			updateStmtT01.setTimestamp(3, Timestamp.valueOf("1900-01-01 00:00:00"));
+			updateStmtT01.setNull(4, Types.BIGINT);
+			updateStmtT01.setNull(5, Types.BIGINT);
+
+			updateStmtT01.setLong(6, planningTime.getCodOwner());
+			updateStmtT01.setInt(7, planningTime.getCodStore());
+			updateStmtT01.setInt(8, planningTime.getCodEmployee());
+			updateStmtT01.setDate(9, Date.valueOf(planningTime.getBeginDate()));
+			updateStmtT01.setTime(10, Time.valueOf(planningTime.getBeginTime()));
+			updateStmtT01.setLong(11, codCustomer);
+
+			updateStmtT01.executeUpdate();
+			// }
+		}
+		return updateStmtT01;
 	}
 
 	public SQLException deletePlanningTime(List<Long> codOwner, List<Integer> codStore, List<Integer> codEmployee,
@@ -264,16 +320,17 @@ public class PlanningTimeDAO extends ConnectionBD {
 
 			LocalDateTime dateTime = ZonedDateTime.now(ZoneOffset.UTC).toLocalDateTime();
 
-			selectStmt = conn.prepareStatement(
-					planningTimeHelper.prepareSelect(codOwner, codStore, codEmployee, beginDate, beginTime, group,
-							weekday, codMaterial, recordMode, reservedTo, codCustomer, number, dateTime.toString(), iniDate, finDate));
+			selectStmt = conn.prepareStatement(planningTimeHelper.prepareSelect(codOwner, codStore, codEmployee,
+					beginDate, beginTime, group, weekday, codMaterial, recordMode, reservedTo, codCustomer, number,
+					dateTime.toString(), iniDate, finDate));
 
 			resultSet = selectStmt.executeQuery();
 
 			while (resultSet.next()) {
 
-				PlanningTime planningTime = planningTimeHelper.assignResult(resultSet, PlanningTimeHelper.SELECT_PLANNING_TIME);
-				
+				PlanningTime planningTime = planningTimeHelper.assignResult(resultSet,
+						PlanningTimeHelper.SELECT_PLANNING_TIME);
+
 				if (planningTime != null)
 					planningTimeList.add(planningTime);
 			}
@@ -308,9 +365,9 @@ public class PlanningTimeDAO extends ConnectionBD {
 			resultSet = selectStmt.executeQuery();
 
 			while (resultSet.next()) {
-				
+
 				PlanningTime planningTime = planningTimeHelper.assignResult(resultSet, PlanningTimeHelper.GET_CART);
-				
+
 				if (planningTime != null)
 					planningTimeList.add(planningTime);
 			}
@@ -345,7 +402,7 @@ public class PlanningTimeDAO extends ConnectionBD {
 			resultSet = selectStmt.executeQuery();
 
 			while (resultSet.next()) {
-				
+
 				PlanningTime planningTime = planningTimeHelper.assignResult(resultSet, PlanningTimeHelper.GET_BOOKED);
 
 				if (planningTime != null)
