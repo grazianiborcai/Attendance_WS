@@ -56,7 +56,7 @@ public class AuthFilter implements ContainerRequestFilter {
 		}
 
 		if (method.equals("GET") && (path.equals("Token/getToken") || path.equals("Time/getTime")
-				|| path.equals("PaymentTest/getTime"))) {
+				|| path.contains("PaymentTest/getTime"))) {
 			return containerRequest;
 		}
 

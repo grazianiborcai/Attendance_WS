@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -46,12 +47,12 @@ import moip.sdk.base.APIContext;
 @Path("/PaymentTest")
 public class PaymentoTest {
 
-	private static final String GET_TIME = "getTime";
+	private static final String GET_TIME = "/getTime/{id}";
 
 	@GET
 	@Path(GET_TIME)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response selectTime() {
+	public Response selectTime(@PathParam("id") String id) {
 
 		// Map<String, String> sdkConfig = new HashMap<String, String>();
 		// sdkConfig.put("mode", "sandbox");
@@ -145,10 +146,12 @@ public class PaymentoTest {
 		moip.sdk.api.FundingInstrument fundingInstrument = new moip.sdk.api.FundingInstrument();
 		fundingInstrument.setCreditCard(creditCard);
 		
-		Payment payment = new Payment(Payment.MULTI, "MOR-NFBMKJWA52JW");
+		Payment payment = new Payment(Payment.MULTI, id);
+//		Payment payment = new Payment(Payment.MULTI, "MPY-YLNXGMBI2IK3");
 		payment.setInstallmentCount(1);
 		payment.setFundingInstrument(fundingInstrument);
-		Payment paymentCreated = payment.create(apiContext);
+		Payment paymentCreated = payment.createAndAuthorized(apiContext);
+//		Payment paymentCreated = payment.get(apiContext);
 		
 		String resp = new Gson().toJsonTree(paymentCreated).toString();
 		

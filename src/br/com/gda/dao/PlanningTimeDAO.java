@@ -477,8 +477,9 @@ public class PlanningTimeDAO extends ConnectionBD {
 		insertStmtT01.setLong(1, reserve.getCodOwner());
 		insertStmtT01.setInt(2, reserve.getCodStore());
 		insertStmtT01.setLong(3, reserve.getCodCustomer());
-		insertStmtT01.setString(4, reserve.getPayId());
-		insertStmtT01.setLong(5, reserve.getReservedNum());
+		insertStmtT01.setTimestamp(4, Timestamp.valueOf(reserve.getReservedTime()));
+		insertStmtT01.setString(5, reserve.getPayId());
+		insertStmtT01.setLong(6, reserve.getReservedNum());
 
 	}
 
