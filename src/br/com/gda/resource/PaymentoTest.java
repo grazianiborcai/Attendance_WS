@@ -35,10 +35,15 @@ import com.paypal.api.payments.Transaction;
 import com.paypal.base.rest.OAuthTokenCredential;
 import com.paypal.base.rest.PayPalRESTException;
 
+import moip.sdk.api.Amount;
 import moip.sdk.api.CreditCard;
 import moip.sdk.api.Customer;
+import moip.sdk.api.Item;
+import moip.sdk.api.MoipAccount;
+import moip.sdk.api.Order;
 import moip.sdk.api.Payment;
 import moip.sdk.api.Phone;
+import moip.sdk.api.Receiver;
 import moip.sdk.api.TaxDocument;
 import moip.sdk.base.APIContext;
 
@@ -122,7 +127,29 @@ public class PaymentoTest {
 		APIContext apiContext = new APIContext("8QLV3TOXIP0AND15ZOB5R4X5T0OYWHVR",
 				"GLYGGCHTSEQO0LCUL9IJNQTEGNG2NZOHA53VRGYC", "OAuth cl6fpbl7fyqiqljnd8apq75satol8q9");
 		apiContext.setConfigurationMap(sdkConfig);
-
+		
+//		Order orders = new Order(APIContext.MULTI).setId("MOR-VMQPTPHRD6J4").get(apiContext);
+		
+		Order multiOrderCreated = new Order(APIContext.MULTI).setOwnId("38816673499398")
+															 .setCustomer(new Customer().setId("CUS-0X40T7MW7LTE"))
+															 .addOrder(new Order().setOwnId("1")
+																				  .addItem(new Item().setProduct("Camisa Verde e Amarelo - Brasil")
+																									 .setQuantity(1)
+																									 .setDetail("Seleção Brasileira")
+																									 .setPrice(2000))
+																				  .addReceiver(new Receiver().setMoipAccount(new MoipAccount().setId("MPA-VB5OGTVPCI52"))
+																						  					 .setType("PRIMARY")))
+															 .addOrder(new Order().setOwnId("2")
+																	  .addItem(new Item().setProduct("Camisa Preta - Alemanha")
+																						 .setQuantity(1)
+																						 .setDetail("Camiseta da Copa 2014")
+																						 .setPrice(1000))
+																	  .addReceiver(new Receiver().setMoipAccount(new MoipAccount().setId("MPA-IFYRB1HBL73Z"))
+																			  					 .setType("PRIMARY"))
+																	  .addReceiver(new Receiver().setMoipAccount(new MoipAccount().setId("MPA-KQB1QFWS6QNM"))
+																			  					 .setType("SECONDARY")
+																			  					 .setAmount(new Amount().setFixed(200)))).create(apiContext);
+		
 		Phone phone = new Phone();
 		phone.setCountryCode("55");
 		phone.setAreaCode("21");
@@ -136,7 +163,7 @@ public class PaymentoTest {
 		customer.setPhone(phone);
 		customer.setTaxDocument(taxDocument);
 		customer.setFullname("José Aldo");
-		customer.setBirthdate("1984-03-15");
+		customer.setBirthDate("1984-03-15");
 
 		CreditCard creditCard = new CreditCard();
 		creditCard.setHash(
@@ -146,12 +173,15 @@ public class PaymentoTest {
 		moip.sdk.api.FundingInstrument fundingInstrument = new moip.sdk.api.FundingInstrument();
 		fundingInstrument.setCreditCard(creditCard);
 		
-		Payment payment = new Payment(Payment.MULTI, id);
+		Payment payment = new Payment(APIContext.MULTI, multiOrderCreated.getId());
 //		Payment payment = new Payment(Payment.MULTI, "MPY-YLNXGMBI2IK3");
 		payment.setInstallmentCount(1);
 		payment.setFundingInstrument(fundingInstrument);
 		Payment paymentCreated = payment.createAndAuthorized(apiContext);
 //		Payment paymentCreated = payment.get(apiContext);
+		
+		
+//		String resp = new Gson().toJsonTree(paymentCreated).toString();
 		
 		String resp = new Gson().toJsonTree(paymentCreated).toString();
 		
