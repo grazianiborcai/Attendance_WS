@@ -121,7 +121,7 @@ public class ServletContainerGDA extends ServletContainer {
 		super.init(config);
 		context = config.getServletContext();
 		putDataSource(config.getServletContext(), "jdbc/gdaDB");
-		publisher = new Publisher();
+//		publisher = new Publisher();
 
 	}
 
