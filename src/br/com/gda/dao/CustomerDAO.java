@@ -20,6 +20,8 @@ public class CustomerDAO extends ConnectionBD {
 
 		Connection conn = null;
 		PreparedStatement insertStmt = null;
+		PreparedStatement selectStmt = null;
+		ResultSet resultSet = null;
 
 		try {
 
@@ -28,16 +30,21 @@ public class CustomerDAO extends ConnectionBD {
 
 			insertStmt = conn.prepareStatement(CustomerHelper.ST_IN_ALL);
 
+			selectStmt = conn.prepareStatement(CustomerHelper.ST_SELECT_LAST_INSERT_ID);
+
 			for (Customer customer : customerList) {
 
 				prepareInsert(insertStmt, customer);
+
+				insertStmt.executeUpdate();
+
+				resultSet = selectStmt.executeQuery();
+
+				if (resultSet.next())
+					customer.setCodCustomer(resultSet.getLong(CustomerHelper.LAST_INSERT_ID));
 			}
 
-			insertStmt.executeBatch();
-
 			conn.commit();
-			
-			conn.close();
 
 			return new SQLException(INSERT_OK, null, 200);
 
@@ -52,7 +59,7 @@ public class CustomerDAO extends ConnectionBD {
 				return e1;
 			}
 		} finally {
-			closeConnection(conn, insertStmt);
+			closeConnection(conn, insertStmt, selectStmt, resultSet);
 		}
 
 	}
@@ -62,6 +69,8 @@ public class CustomerDAO extends ConnectionBD {
 		Connection conn = null;
 		PreparedStatement insertStmt = null;
 		PreparedStatement updateStmt = null;
+		PreparedStatement selectStmt = null;
+		ResultSet resultSet = null;
 
 		try {
 
@@ -72,6 +81,8 @@ public class CustomerDAO extends ConnectionBD {
 
 			updateStmt = conn.prepareStatement(CustomerHelper.ST_UP_ALL);
 
+			selectStmt = conn.prepareStatement(CustomerHelper.ST_SELECT_LAST_INSERT_ID);
+
 			for (Customer customer : customerList) {
 
 				if ((customer.getRecordMode() != null && customer.getRecordMode().equals(RecordMode.ISNEW))
@@ -79,12 +90,19 @@ public class CustomerDAO extends ConnectionBD {
 
 					prepareInsert(insertStmt, customer);
 
+					insertStmt.executeUpdate();
+
+					resultSet = selectStmt.executeQuery();
+
+					if (resultSet.next())
+						customer.setCodCustomer(resultSet.getLong(CustomerHelper.LAST_INSERT_ID));
+
 				} else {
 
 					updateStmt.setString(1, customer.getPhone());
 					updateStmt.setString(2, customer.getPassword());
 					updateStmt.setString(3, customer.getName());
-					//updateStmt.setByte(4, customer.getCodGender());
+					// updateStmt.setByte(4, customer.getCodGender());
 					if (customer.getCodGender() != null)
 						updateStmt.setByte(4, customer.getCodGender());
 					else
@@ -94,7 +112,7 @@ public class CustomerDAO extends ConnectionBD {
 					updateStmt.setString(7, customer.getEmail());
 					updateStmt.setString(8, customer.getAddress1());
 					updateStmt.setString(9, customer.getAddress2());
-					//updateStmt.setInt(10, customer.getPostalcode());
+					// updateStmt.setInt(10, customer.getPostalcode());
 					if (customer.getPostalcode() != null)
 						updateStmt.setInt(10, customer.getPostalcode());
 					else
@@ -102,15 +120,14 @@ public class CustomerDAO extends ConnectionBD {
 					updateStmt.setString(11, customer.getCity());
 					updateStmt.setString(12, customer.getCountry());
 					updateStmt.setString(13, customer.getState());
+					updateStmt.setString(14, customer.getCodPayment());
 
-					updateStmt.setLong(14, customer.getCodCustomer());
+					updateStmt.setLong(15, customer.getCodCustomer());
 
 					updateStmt.addBatch();
 
 				}
 			}
-
-			insertStmt.executeBatch();
 
 			updateStmt.executeBatch();
 
@@ -126,7 +143,7 @@ public class CustomerDAO extends ConnectionBD {
 				return e1;
 			}
 		} finally {
-			closeConnection(conn, insertStmt, updateStmt);
+			closeConnection(conn, insertStmt, updateStmt, selectStmt, resultSet);
 		}
 	}
 
@@ -213,12 +230,12 @@ public class CustomerDAO extends ConnectionBD {
 			conn = getConnection();
 
 			CustomerHelper customerHelper = new CustomerHelper();
-			
-			String select = customerHelper.prepareSelect(codCustomer, phone, password, name,
-					codGender, cpf, bornDate, email, address1, address2, postalcode, city, country, state);
-			
-//			email.clear();
-//			email.add(select);
+
+			String select = customerHelper.prepareSelect(codCustomer, phone, password, name, codGender, cpf, bornDate,
+					email, address1, address2, postalcode, city, country, state);
+
+			// email.clear();
+			// email.add(select);
 
 			selectStmt = conn.prepareStatement(select);
 
@@ -263,7 +280,7 @@ public class CustomerDAO extends ConnectionBD {
 		insertStmt.setString(12, customer.getCountry());
 		insertStmt.setString(13, customer.getState());
 
-		insertStmt.addBatch();
+		// insertStmt.addBatch();
 	}
 
 }

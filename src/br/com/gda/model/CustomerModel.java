@@ -1,8 +1,10 @@
 package br.com.gda.model;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -16,12 +18,63 @@ import com.google.gson.JsonParser;
 
 import br.com.gda.dao.CustomerDAO;
 import br.com.gda.helper.Customer;
+import br.com.gda.helper.RecordMode;
+import moip.sdk.api.Phone;
+import moip.sdk.base.APIContext;
 
 public class CustomerModel extends JsonBuilder {
 
 	public Response insertCustomer(String incomingData) {
 
-		SQLException exception = new CustomerDAO().insertCustomer(jsonToCustomerList(incomingData));
+		ArrayList<Customer> customerList = jsonToCustomerList(incomingData);
+
+		SQLException exception = new CustomerDAO().insertCustomer(customerList);
+
+		if (exception.getErrorCode() == 200) {
+
+			ArrayList<Customer> customerUpdateList = new ArrayList<Customer>();
+
+			ConcurrentHashMap<String, String> sdkConfig = new ConcurrentHashMap<String, String>();
+			sdkConfig.put("mode", "sandbox");
+
+			APIContext apiContext = new APIContext("8QLV3TOXIP0AND15ZOB5R4X5T0OYWHVR",
+					"GLYGGCHTSEQO0LCUL9IJNQTEGNG2NZOHA53VRGYC", "OAuth cl6fpbl7fyqiqljnd8apq75satol8q9");
+			apiContext.setConfigurationMap(sdkConfig);
+
+			moip.sdk.api.Customer customerMoip = new moip.sdk.api.Customer();
+			for (Customer customer : customerList) {
+				customerMoip.setOwnId(customer.getCodCustomer().toString());
+				customerMoip.setFullname(customer.getName());
+				customerMoip.setEmail(customer.getEmail());
+				customerMoip.setBirthDate(customer.getBornDate().toString());
+				String phone = customer.getPhone();
+
+				customerMoip.setPhone(new Phone().setCountryCode("55").setAreaCode(phone.substring(1, 3))
+						.setNumber(phone.substring(5, 14)));
+
+				moip.sdk.api.Customer customerMoipCreated;
+				try {
+					customerMoipCreated = customerMoip.create(apiContext);
+					
+					String id = customerMoipCreated.getId();
+
+					customer.setCodPayment(id);
+					customer.setRecordMode(RecordMode.ISUPDATED);
+
+					customerUpdateList.add(customer);
+
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+			SQLException exceptionUpdate = new CustomerDAO().updateCustomer(customerUpdateList);
+
+			if (exceptionUpdate.getErrorCode() != 200)
+				exceptionUpdate.printStackTrace();
+
+		}
 
 		JsonObject jsonObject = getJsonObjectUpdate(exception);
 
@@ -121,7 +174,8 @@ public class CustomerModel extends JsonBuilder {
 
 			if (customerList == null || customerList.size() == 0) {
 				throw new WebApplicationException(Status.UNAUTHORIZED);
-//				exception = new SQLException(email+" : "+password+" : "+emailList.get(0), null, 200);
+				// exception = new SQLException(email+" : "+password+" :
+				// "+emailList.get(0), null, 200);
 			}
 
 			jsonElement = new Gson().toJsonTree(customerList);

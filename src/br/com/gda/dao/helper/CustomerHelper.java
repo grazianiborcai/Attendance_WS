@@ -27,6 +27,7 @@ public class CustomerHelper extends GdaDB {
 	public static final String FIELD12 = "City";
 	public static final String FIELD13 = "Country";
 	public static final String FIELD14 = "State_province";
+	public static final String FIELD15 = "Cod_payment";
 
 	public static final String ST_IN_ALL = "INSERT INTO " + SCHEMA + "." + TABLE + " (" + FIELD02 + ", " + FIELD03
 			+ ", " + FIELD04 + ", " + FIELD05 + ", " + FIELD06 + ", " + FIELD07 + ", " + FIELD08 + ", " + FIELD09 + ", "
@@ -36,14 +37,17 @@ public class CustomerHelper extends GdaDB {
 	public static final String ST_UP_ALL = "UPDATE " + SCHEMA + "." + TABLE + " SET " + FIELD02 + "=?" + ", " + FIELD03
 			+ "=?" + ", " + FIELD04 + "=?" + ", " + FIELD05 + "=?" + ", " + FIELD06 + "=?" + ", " + FIELD07 + "=?"
 			+ ", " + FIELD08 + "=?" + ", " + FIELD09 + "=?" + ", " + FIELD10 + "=?" + ", " + FIELD11 + "=?" + ", "
-			+ FIELD12 + "=?" + ", " + FIELD13 + "=?" + ", " + FIELD14 + "=?" + " WHERE " + FIELD01 + "=?";
-	
-	public static final String ST_UP_PASS = "UPDATE " + SCHEMA + "." + TABLE + " SET " + FIELD03
-			+ "=?" + " WHERE " + FIELD01 + "=?";
+			+ FIELD12 + "=?" + ", " + FIELD13 + "=?" + ", " + FIELD14 + "=?" + ", " + FIELD15 + "=?" + " WHERE "
+			+ FIELD01 + "=?";
+
+	public static final String ST_UP_PASS = "UPDATE " + SCHEMA + "." + TABLE + " SET " + FIELD03 + "=?" + " WHERE "
+			+ FIELD01 + "=?";
 
 	public static final String ST_DELETE = "DELETE FROM " + SCHEMA + "." + TABLE;
 
 	public static final String ST_SELECT = "SELECT * FROM " + SCHEMA + "." + TABLE;
+
+	public static final String ST_SELECT_LAST_INSERT_ID = "SELECT " + LAST_INSERT_ID;
 
 	public Customer assignResult(ResultSet resultSet) throws SQLException {
 
@@ -65,6 +69,7 @@ public class CustomerHelper extends GdaDB {
 		customer.setCity(resultSet.getString(TABLE + "." + FIELD12));
 		customer.setCountry(resultSet.getString(TABLE + "." + FIELD13));
 		customer.setState(resultSet.getString(TABLE + "." + FIELD14));
+		customer.setCodPayment(resultSet.getString(TABLE + "." + FIELD15));
 
 		return customer;
 	}

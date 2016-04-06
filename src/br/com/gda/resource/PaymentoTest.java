@@ -130,25 +130,31 @@ public class PaymentoTest {
 		
 //		Order orders = new Order(APIContext.MULTI).setId("MOR-VMQPTPHRD6J4").get(apiContext);
 		
-		Order multiOrderCreated = new Order(APIContext.MULTI).setOwnId("38816673499398")
-															 .setCustomer(new Customer().setId("CUS-0X40T7MW7LTE"))
-															 .addOrder(new Order().setOwnId("1")
-																				  .addItem(new Item().setProduct("Camisa Verde e Amarelo - Brasil")
-																									 .setQuantity(1)
-																									 .setDetail("Seleção Brasileira")
-																									 .setPrice(2000))
-																				  .addReceiver(new Receiver().setMoipAccount(new MoipAccount().setId("MPA-VB5OGTVPCI52"))
-																						  					 .setType("PRIMARY")))
-															 .addOrder(new Order().setOwnId("2")
-																	  .addItem(new Item().setProduct("Camisa Preta - Alemanha")
-																						 .setQuantity(1)
-																						 .setDetail("Camiseta da Copa 2014")
-																						 .setPrice(1000))
-																	  .addReceiver(new Receiver().setMoipAccount(new MoipAccount().setId("MPA-IFYRB1HBL73Z"))
-																			  					 .setType("PRIMARY"))
-																	  .addReceiver(new Receiver().setMoipAccount(new MoipAccount().setId("MPA-KQB1QFWS6QNM"))
-																			  					 .setType("SECONDARY")
-																			  					 .setAmount(new Amount().setFixed(200)))).create(apiContext);
+		Order multiOrderCreated = null;
+		try {
+			multiOrderCreated = new Order(APIContext.MULTI).setOwnId("38816673499398")
+																 .setCustomer(new Customer().setId("CUS-0X40T7MW7LTE"))
+																 .addOrder(new Order().setOwnId("1")
+																					  .addItem(new Item().setProduct("Camisa Verde e Amarelo - Brasil")
+																										 .setQuantity(1)
+																										 .setDetail("Seleção Brasileira")
+																										 .setPrice(2000))
+																					  .addReceiver(new Receiver().setMoipAccount(new MoipAccount().setId("MPA-VB5OGTVPCI52"))
+																							  					 .setType("PRIMARY")))
+																 .addOrder(new Order().setOwnId("2")
+																		  .addItem(new Item().setProduct("Camisa Preta - Alemanha")
+																							 .setQuantity(1)
+																							 .setDetail("Camiseta da Copa 2014")
+																							 .setPrice(1000))
+																		  .addReceiver(new Receiver().setMoipAccount(new MoipAccount().setId("MPA-IFYRB1HBL73Z"))
+																				  					 .setType("PRIMARY"))
+																		  .addReceiver(new Receiver().setMoipAccount(new MoipAccount().setId("MPA-KQB1QFWS6QNM"))
+																				  					 .setType("SECONDARY")
+																				  					 .setAmount(new Amount().setFixed(200)))).create(apiContext);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		Phone phone = new Phone();
 		phone.setCountryCode("55");
@@ -177,7 +183,13 @@ public class PaymentoTest {
 //		Payment payment = new Payment(Payment.MULTI, "MPY-YLNXGMBI2IK3");
 		payment.setInstallmentCount(1);
 		payment.setFundingInstrument(fundingInstrument);
-		Payment paymentCreated = payment.createAndAuthorized(apiContext);
+		Payment paymentCreated = null;
+		try {
+			paymentCreated = payment.createAndAuthorized(apiContext);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 //		Payment paymentCreated = payment.get(apiContext);
 		
 		
