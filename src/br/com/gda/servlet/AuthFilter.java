@@ -127,13 +127,13 @@ public class AuthFilter implements ContainerRequestFilter {
 
 					ArrayList<Customer> customerList = null;
 					try {
-						if (!path.equals("CodePassword/getCode") && !path.equals("Customer/changePassword")){
+						if (!path.equals("CodePassword/getCode") && !path.equals("Customer/changePassword")) {
 							List<String> emailList = new ArrayList<String>();
 							emailList.add(lap[0]);
 
 							List<String> passwordList = new ArrayList<String>();
 							passwordList.add(lap[1]);
-							
+
 							customerList = new CustomerDAO().selectCustomer(null, null, passwordList, null, null, null,
 									null, emailList, null, null, null, null, null, null);
 						} else {
@@ -153,6 +153,7 @@ public class AuthFilter implements ContainerRequestFilter {
 					else {
 						Customer customer = customerList.get(0);
 						header.add(COD_CUSTOMER, customer.getCodCustomer().toString());
+						header.add("codPayment", customer.getCodPayment());
 						header.add(EMAIL, customer.getEmail());
 						header.add(PASSWORD, customer.getPassword());
 						header.add("name", customer.getName());
