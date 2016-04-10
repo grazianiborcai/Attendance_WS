@@ -1,5 +1,7 @@
 package br.com.gda.model;
 
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -8,6 +10,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -19,10 +22,23 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import br.com.gda.dao.PlanningTimeDAO;
+import br.com.gda.dao.StoreDAO;
 import br.com.gda.helper.PayCart;
 import br.com.gda.helper.PlanningTime;
 import br.com.gda.helper.RecordMode;
 import br.com.gda.helper.Reserve;
+import br.com.gda.helper.Store;
+import moip.sdk.api.Amount;
+import moip.sdk.api.CreditCard;
+import moip.sdk.api.Customer;
+import moip.sdk.api.Item;
+import moip.sdk.api.MoipAccount;
+import moip.sdk.api.Order;
+import moip.sdk.api.Payment;
+import moip.sdk.api.Phone;
+import moip.sdk.api.Receiver;
+import moip.sdk.api.TaxDocument;
+import moip.sdk.base.APIContext;
 
 public class PlanningTimeModel extends JsonBuilder {
 
@@ -97,7 +113,8 @@ public class PlanningTimeModel extends JsonBuilder {
 			List<Long> codCustomer, List<Long> number, String iniDate, String finDate) throws SQLException {
 
 		ArrayList<PlanningTime> planningTime = new PlanningTimeDAO().selectPlanningTime(codOwner, codStore, codEmployee,
-				beginDate, beginTime, group, weekday, codMaterial, recordMode, reservedTo, codCustomer, number, iniDate, finDate);
+				beginDate, beginTime, group, weekday, codMaterial, recordMode, reservedTo, codCustomer, number, iniDate,
+				finDate);
 
 		Predicate<PlanningTime> predicateDM = new Predicate<PlanningTime>() {
 
@@ -112,8 +129,8 @@ public class PlanningTimeModel extends JsonBuilder {
 						int min = part * i;
 						LocalTime beginTime = pTEach.getBeginTime().plusMinutes(min);
 
-//						PlanningTime planningT = null;
-						
+						// PlanningTime planningT = null;
+
 						Optional<PlanningTime> planningT = planningTime.stream()
 								.filter(p -> p.getCodOwner().equals(pTEach.getCodOwner())
 										&& p.getCodStore().equals(pTEach.getCodStore())
@@ -124,7 +141,8 @@ public class PlanningTimeModel extends JsonBuilder {
 
 						if (!planningT.isPresent())
 							return false;
-					};
+					}
+				;
 
 				return true;
 			}
@@ -147,8 +165,9 @@ public class PlanningTimeModel extends JsonBuilder {
 
 		try {
 
-			jsonElement = new Gson().toJsonTree(selectPlanningTime(codOwner, codStore, codEmployee, beginDate,
-					beginTime, group, weekday, codMaterial, recordMode, reservedTo, codCustomer, number, iniDate, finDate));
+			jsonElement = new Gson()
+					.toJsonTree(selectPlanningTime(codOwner, codStore, codEmployee, beginDate, beginTime, group,
+							weekday, codMaterial, recordMode, reservedTo, codCustomer, number, iniDate, finDate));
 
 		} catch (SQLException e) {
 			exception = e;
@@ -226,12 +245,12 @@ public class PlanningTimeModel extends JsonBuilder {
 		return response(getBookedJson(codCustomer));
 	}
 
-	public Response payCart(String incomingData, Long customer) {
+	public Response payCart(String incomingData, Long customer, String codPayment, String phone) {
 
 		@SuppressWarnings("unchecked")
 		ArrayList<PayCart> payCart = (ArrayList<PayCart>) jsonToObjectList(incomingData, PayCart.class);
 
-		if (payCart.get(0).getCreditCard() == null || !payCart.get(0).getCreditCard().isComplete()) {
+		if (payCart.get(0).getCreditCard() == null || !payCart.get(0).isComplete()) {
 
 			SQLException exception = new SQLException("Message erro", null, 30);
 
@@ -245,7 +264,6 @@ public class PlanningTimeModel extends JsonBuilder {
 		ArrayList<PlanningTime> planningTimeList = payCart.get(0).getPlanningTime();
 
 		ArrayList<PlanningTime> planningTimeListAux = new ArrayList<PlanningTime>();
-
 		planningTimeListAux.addAll(planningTimeList);
 
 		PlanningTimeDAO planningTimeDAO = new PlanningTimeDAO();
@@ -254,28 +272,155 @@ public class PlanningTimeModel extends JsonBuilder {
 
 		if (exception.getErrorCode() == 200) {
 
-			// Colocar o código de pagamento aqui
-
 			LocalDateTime dateTime = ZonedDateTime.now(ZoneOffset.UTC).toLocalDateTime();
+
+			// Place the payment code here
+
+			ConcurrentHashMap<String, String> sdkConfig = new ConcurrentHashMap<String, String>();
+			sdkConfig.put("mode", "sandbox");
+
+			APIContext apiContext = new APIContext("8QLV3TOXIP0AND15ZOB5R4X5T0OYWHVR",
+					"GLYGGCHTSEQO0LCUL9IJNQTEGNG2NZOHA53VRGYC", "OAuth cl6fpbl7fyqiqljnd8apq75satol8q9");
+			apiContext.setConfigurationMap(sdkConfig);
+
+			List<Integer> codStore = planningTimeListAux.stream().map(p -> p.getCodStore()).distinct()
+					.collect(Collectors.toList());
+
+			ArrayList<Store> storeList = null;
+			try {
+				storeList = new StoreDAO().selectStore(null, codStore, null, null, null, null, null, null, null, null,
+						null, null, null, null, null, null);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			String numMulti = customer.toString() + String.valueOf(dateTime.getYear())
+					+ String.valueOf(dateTime.getMonthValue()) + String.valueOf(dateTime.getDayOfMonth())
+					+ String.valueOf(dateTime.getHour()) + String.valueOf(dateTime.getMinute())
+					+ String.valueOf(dateTime.getSecond());
+
+			Order multiOrder = new Order(APIContext.MULTI).setOwnId(numMulti).setCustomer(new Customer().setId(codPayment));
+
+
+			Order order = null;
+
+			int i = 0;
+			Store storeBefore = null;
+			for (PlanningTime planningTime : planningTimeListAux) {
+				Store store = storeList.stream().filter(p -> p.getCodOwner().equals(planningTime.getCodOwner())
+						&& p.getCodStore().equals(planningTime.getCodStore())).findAny().get();
+
+				if (storeBefore == null || !store.getCodStore().equals(storeBefore.getCodStore())) {
+					if (storeBefore != null)
+						multiOrder.addOrder(order);
+
+					String num = planningTime.getCodOwner().toString() + planningTime.getCodStore().toString()
+							+ customer.toString() + String.valueOf(dateTime.getYear())
+							+ String.valueOf(dateTime.getMonthValue()) + String.valueOf(dateTime.getDayOfMonth())
+							+ String.valueOf(dateTime.getHour()) + String.valueOf(dateTime.getMinute())
+							+ String.valueOf(dateTime.getSecond());
+
+					order = new Order();
+					order.setOwnId(num);
+					order.addReceiver(new Receiver().setMoipAccount(new MoipAccount().setId(store.getCodPayment()))
+							.setType("PRIMARY"));
+					if (i == 0)
+						order.addReceiver(new Receiver().setMoipAccount(new MoipAccount().setId("MPA-3RDTT72OP4G9"))
+								.setType("SECONDARY").setAmount(new Amount().setFixed(200)));
+				}
+
+//				BigDecimal t = planningTime.getPriceStore().subtract(BigDecimal.valueOf(2));
+				BigDecimal t2 = planningTime.getPriceStore().multiply(BigDecimal.valueOf(100));
+				
+				int ti = t2.intValue();
+				
+				order.addItem(new Item().setProduct(planningTime.getCodMaterial().toString()).setQuantity(1)
+						.setDetail(planningTime.getCodMaterial().toString()).setPrice(ti));
+
+				storeBefore = store;
+				i++;
+			}
+
+			multiOrder.addOrder(order);
+
+			Order multiOrderCreated = null;
+			Payment paymentCreated = null;
+
+			CreditCard creditCard = payCart.get(0).getCreditCard();
+
+			Phone phoneCreditCard = new Phone().setCountryCode("55").setAreaCode(phone.substring(1, 3))
+					.setNumber(phone.substring(5, 14));
+
+			creditCard.getHolder().setPhone(phoneCreditCard);
+
+			moip.sdk.api.FundingInstrument fundingInstrument = new moip.sdk.api.FundingInstrument();
+			fundingInstrument.setCreditCard(creditCard);
+
+			try {
+				multiOrderCreated = multiOrder.create(apiContext);
+				paymentCreated = new Payment(APIContext.MULTI, multiOrderCreated.getId()).setInstallmentCount(1)
+						.setFundingInstrument(fundingInstrument).createAndAuthorized(apiContext);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			List<Order> orderList = multiOrderCreated.getOrders();
 
 			ArrayList<Reserve> reserveList = new ArrayList<Reserve>();
 
 			Reserve reserve = new Reserve();
 
-			planningTimeListAux.stream().forEach(p -> {
-				reserve.setCodOwner(p.getCodOwner());
-				reserve.setCodStore(p.getCodStore());
-				reserve.setCodCustomer(customer);
-				reserve.setReservedTime(dateTime);
-				reserve.setPayId("pay-hjhduu388eiudi349894kj");
-				String num = p.getCodOwner().toString() + customer.toString() + String.valueOf(dateTime.getYear())
-						+ String.valueOf(dateTime.getMonthValue()) + String.valueOf(dateTime.getDayOfMonth())
-						+ String.valueOf(dateTime.getHour()) + String.valueOf(dateTime.getMinute())
-						+ String.valueOf(dateTime.getSecond());
-				reserve.setReservedNum(Long.valueOf(num));
-				if (!reserveList.contains(reserve))
-					reserveList.add(reserve);
-			});
+			i = 0;
+			storeBefore = null;
+			for (PlanningTime planningTime : planningTimeListAux) {
+				Store store = storeList.stream().filter(p -> p.getCodOwner().equals(planningTime.getCodOwner())
+						&& p.getCodStore().equals(planningTime.getCodStore())).findAny().get();
+
+				if (storeBefore == null || !store.getCodStore().equals(storeBefore.getCodStore())) {
+
+					reserve.setCodOwner(planningTime.getCodOwner());
+					reserve.setCodStore(planningTime.getCodStore());
+					reserve.setCodCustomer(customer);
+					reserve.setReservedTime(dateTime);
+					String payId = orderList.get(i).getId();
+					reserve.setPayId(payId);
+					// String num = planningTime.getCodOwner().toString() +
+					// customer.toString() + String.valueOf(dateTime.getYear())
+					// + String.valueOf(dateTime.getMonthValue()) +
+					// String.valueOf(dateTime.getDayOfMonth())
+					// + String.valueOf(dateTime.getHour()) +
+					// String.valueOf(dateTime.getMinute())
+					// + String.valueOf(dateTime.getSecond());
+					reserve.setReservedNum(paymentCreated.getId());
+					if (!reserveList.contains(reserve)) {
+						reserveList.add(reserve);
+					}
+					i++;
+				}
+
+				storeBefore = store;
+			}
+
+			// planningTimeList.stream().forEach(p -> {
+			// reserve.setCodOwner(p.getCodOwner());
+			// reserve.setCodStore(p.getCodStore());
+			// reserve.setCodCustomer(customer);
+			// reserve.setReservedTime(dateTime);
+			// reserve.setPayId("pay-hjhduu388eiudi349894kj");
+			// String num = p.getCodOwner().toString() + customer.toString() +
+			// String.valueOf(dateTime.getYear())
+			// + String.valueOf(dateTime.getMonthValue()) +
+			// String.valueOf(dateTime.getDayOfMonth())
+			// + String.valueOf(dateTime.getHour()) +
+			// String.valueOf(dateTime.getMinute())
+			// + String.valueOf(dateTime.getSecond());
+			// reserve.setReservedNum(Long.valueOf(num));
+			// if (!reserveList.contains(reserve)) {
+			// reserveList.add(reserve);
+			// }
+			// });
 
 			exception = planningTimeDAO.insertReserve(reserveList);
 

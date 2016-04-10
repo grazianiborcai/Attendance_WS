@@ -31,7 +31,7 @@ public class ReserveHelper extends GdaDB {
 		reserved.setCodCustomer(resultSet.getLong(TABLE + "." + FIELD04));
 		reserved.setReservedTime(resultSet.getTimestamp(TABLE + "." + FIELD05).toLocalDateTime());
 		reserved.setPayId(resultSet.getString(TABLE + "." + FIELD06));
-		reserved.setReservedNum(resultSet.getLong(TABLE + "." + FIELD07));
+		reserved.setReservedNum(resultSet.getString(TABLE + "." + FIELD07));
 
 		return reserved;
 	}

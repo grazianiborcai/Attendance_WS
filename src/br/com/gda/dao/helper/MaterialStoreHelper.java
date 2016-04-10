@@ -19,6 +19,7 @@ public class MaterialStoreHelper extends GdaDB {
 	public static final String FIELD05 = "Duration_store";
 	public static final String FIELD06 = RECORD_MODE;
 	public static final String FIELD07 = "Cod_curr_store";
+	public static final String FIELD08 = WEEKDAY;
 
 	public static final String ST_IN_ALL_FIELD = "INSERT INTO " + SCHEMA + "."
 			+ TABLE + " (" + FIELD01 + ", " + FIELD02 + ", " + FIELD03 + ", "

@@ -154,6 +154,7 @@ public class AuthFilter implements ContainerRequestFilter {
 						Customer customer = customerList.get(0);
 						header.add(COD_CUSTOMER, customer.getCodCustomer().toString());
 						header.add("codPayment", customer.getCodPayment());
+						header.add(PHONE, customer.getPhone());
 						header.add(EMAIL, customer.getEmail());
 						header.add(PASSWORD, customer.getPassword());
 						header.add("name", customer.getName());

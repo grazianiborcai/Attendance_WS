@@ -28,6 +28,7 @@ public class StoreHelper extends GdaDB {
 	protected static final String FIELD14 = PHONE;
 	protected static final String FIELD15 = COD_CURR;
 	protected static final String FIELD16 = RECORD_MODE;
+	protected static final String FIELD17 = "Cod_payment";
 
 	public static final String ST_IN_ALL_FIELD = "INSERT INTO " + SCHEMA + "."
 			+ TABLE + " (" + FIELD01 + ", " + FIELD03 + ", " + FIELD04 + ", "
@@ -75,6 +76,7 @@ public class StoreHelper extends GdaDB {
 		store.setPhone(resultSet.getString(FIELD14));
 		store.setCodCurr(resultSet.getString(FIELD15));
 		store.setRecordMode(resultSet.getString(FIELD16));
+		store.setCodPayment(resultSet.getString(FIELD17));
 
 		return store;
 	}

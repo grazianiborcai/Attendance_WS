@@ -33,6 +33,7 @@ public class PlanningTimeHelper extends GdaDB {
 	public static final String FIELD13 = "Cod_customer_reserve";
 	public static final String FIELD14 = "Number";
 	public static final String FIELD15 = "Part";
+	public static final String FIELD16 = "Reserved_num";
 
 	public static final String ST_IN_ALL_FIELD = "INSERT INTO " + SCHEMA + "." + TABLE + " (" + FIELD01 + ", " + FIELD02
 			+ ", " + FIELD03 + ", " + FIELD04 + ", " + FIELD05 + ", " + FIELD06 + ", " + FIELD07 + ", " + FIELD08 + ", "
@@ -58,12 +59,19 @@ public class PlanningTimeHelper extends GdaDB {
 			+ EmployeeMaterialHelper.TABLE + " ON " + TABLE + "." + FIELD01 + " = " + EmployeeMaterialHelper.TABLE + "."
 			+ EmployeeMaterialHelper.FIELD01 + " AND " + TABLE + "." + FIELD02 + " = " + EmployeeMaterialHelper.TABLE
 			+ "." + EmployeeMaterialHelper.FIELD02 + " AND " + TABLE + "." + FIELD03 + " = "
-			+ EmployeeMaterialHelper.TABLE + "." + EmployeeMaterialHelper.FIELD03;
+			+ EmployeeMaterialHelper.TABLE + "." + EmployeeMaterialHelper.FIELD03
+
+			+ " INNER JOIN " + SCHEMA + "." + MaterialStoreHelper.TABLE + " ON " + TABLE + "." + FIELD01 + " = "
+			+ MaterialStoreHelper.TABLE + "." + MaterialStoreHelper.FIELD01 + " AND " + TABLE + "." + FIELD02 + " = "
+			+ MaterialStoreHelper.TABLE + "." + MaterialStoreHelper.FIELD03 + " AND " + TABLE + "." + FIELD07 + " = "
+			+ MaterialStoreHelper.TABLE + "." + MaterialStoreHelper.FIELD08 + " AND " + EmployeeMaterialHelper.TABLE
+			+ "." + EmployeeMaterialHelper.FIELD04 + " = " + MaterialStoreHelper.TABLE + "."
+			+ MaterialStoreHelper.FIELD02;
 
 	public static final String ST_GET_CART = "SELECT DISTINCT " + FIELD01 + ", " + FIELD02 + ", " + FIELD03 + ", "
 			+ FIELD04 + ", " + FIELD06 + ", " + FIELD07 + ", " + FIELD08 + ", " + FIELD09 + ", " + FIELD10 + ", "
-			+ FIELD11 + ", " + FIELD12 + ", " + FIELD13 + ", " + FIELD14 + ", " + FIELD15 + ", count(" + FIELD06
-			+ ") as " + EmployeeMaterialHelper.FIELD05 + " FROM " + SCHEMA + "." + TABLE;
+			+ FIELD11 + ", " + FIELD12 + ", " + FIELD13 + ", " + FIELD14 + ", " + FIELD15 + ", " + FIELD16 + ", count("
+			+ FIELD06 + ") as " + EmployeeMaterialHelper.FIELD05 + " FROM " + SCHEMA + "." + TABLE;
 
 	public PlanningTime assignResult(ResultSet resultSet, String from) throws SQLException {
 
@@ -88,24 +96,30 @@ public class PlanningTimeHelper extends GdaDB {
 			if (from == GET_CART || from == GET_BOOKED) {
 				planningTime.setBeginTime(resultSet.getTime(TABLE + "." + FIELD06).toLocalTime());
 				planningTime.setCodMaterial(resultSet.getInt(TABLE + "." + FIELD08));
+				planningTime.setPriceStore(resultSet.getBigDecimal(TABLE + "." + FIELD10));
+				planningTime.setCodCurrStore(resultSet.getString(TABLE + "." + FIELD11));
 			} else {
 				planningTime.setBeginTime(resultSet.getTime(TABLE + "." + FIELD05).toLocalTime());
 				planningTime.setCodMaterial(
 						resultSet.getInt(EmployeeMaterialHelper.TABLE + "." + EmployeeMaterialHelper.FIELD04));
+				planningTime.setPriceStore(
+						resultSet.getBigDecimal(MaterialStoreHelper.TABLE + "." + MaterialStoreHelper.FIELD04));
+				planningTime.setCodCurrStore(
+						resultSet.getString(MaterialStoreHelper.TABLE + "." + MaterialStoreHelper.FIELD07));
 			}
 
 			// planningTime.setEndTime(endTime);
 
-//			planningTime.setGroup(resultSet.getInt(TABLE + "." + FIELD06));
+			// planningTime.setGroup(resultSet.getInt(TABLE + "." + FIELD06));
 			planningTime.setWeekday(resultSet.getInt(TABLE + "." + FIELD07));
 			planningTime.setRecordMode(resultSet.getString(TABLE + "." + FIELD09));
-			planningTime.setPriceStore(resultSet.getBigDecimal(TABLE + "." + FIELD10));
-			planningTime.setCodCurrStore(resultSet.getString(TABLE + "." + FIELD11));
+
 			planningTime.setReservedTo(resultSet.getTimestamp(TABLE + "." + FIELD12).toLocalDateTime());
 			planningTime.setCodCustomer(resultSet.getLong(TABLE + "." + FIELD13));
 			planningTime.setNumber(resultSet.getLong(TABLE + "." + FIELD14));
 			planningTime.setPart(resultSet.getInt(TABLE + "." + FIELD15));
 			planningTime.setRate(rate);
+			planningTime.setReservedNum(resultSet.getString(TABLE + "." + FIELD16));
 
 		}
 
@@ -135,8 +149,8 @@ public class PlanningTimeHelper extends GdaDB {
 		String stmt = ST_SELECT;
 
 		if (iniDate != null || finDate != null)
-			stmt = prepareWhereClause(stmt, preparePlanningTimeWhere(codOwner, codStore, codEmployee, null,
-					beginTime, group, weekday, codMaterial, recordMode, reservedTo, codCustomer, number));
+			stmt = prepareWhereClause(stmt, preparePlanningTimeWhere(codOwner, codStore, codEmployee, null, beginTime,
+					group, weekday, codMaterial, recordMode, reservedTo, codCustomer, number));
 		else
 			stmt = prepareWhereClause(stmt, preparePlanningTimeWhere(codOwner, codStore, codEmployee, beginDate,
 					beginTime, group, weekday, codMaterial, recordMode, reservedTo, codCustomer, number));
@@ -145,12 +159,13 @@ public class PlanningTimeHelper extends GdaDB {
 			stmt = stmt + " AND ";
 		else
 			stmt = stmt + " WHERE ";
-		
-		if (iniDate != null || finDate != null)
-			stmt = stmt + FIELD04 + " >= '" + iniDate + "' AND " + FIELD04 + " <= '" + finDate + "' AND ";
 
-		stmt = stmt + FIELD12 + " < '" + dateTime + "' AND ( " + FIELD09 + " = '" + RecordMode.RECORD_OK + "' OR "
-				+ FIELD09 + " = '" + RecordMode.ISRESERVED + "' )";
+		if (iniDate != null || finDate != null)
+			stmt = stmt + TABLE + "." + FIELD04 + " >= '" + iniDate + "' AND " + TABLE + "." + FIELD04 + " <= '"
+					+ finDate + "' AND ";
+
+		stmt = stmt + TABLE + "." + FIELD12 + " < '" + dateTime + "' AND ( " + TABLE + "." + FIELD09 + " = '"
+				+ RecordMode.RECORD_OK + "' OR " + TABLE + "." + FIELD09 + " = '" + RecordMode.ISRESERVED + "' )";
 
 		stmt = stmt + " ORDER BY " + TABLE + "." + FIELD01 + ", " + TABLE + "." + FIELD02 + ", " + TABLE + "." + FIELD03
 				+ ", " + TABLE + "." + FIELD04 + ", " + TABLE + "." + FIELD05;
@@ -162,8 +177,8 @@ public class PlanningTimeHelper extends GdaDB {
 
 		String stmt = ST_GET_CART;
 
-		stmt = stmt + " WHERE " + FIELD12 + " > '" + dateTime + "' AND " + FIELD13 + " = '" + codCustomer + "' AND "
-				+ FIELD09 + " = '" + recordMode + "'";
+		stmt = stmt + " WHERE " + TABLE + "." + FIELD12 + " > '" + dateTime + "' AND " + TABLE + "." + FIELD13 + " = '"
+				+ codCustomer + "' AND " + TABLE + "." + FIELD09 + " = '" + recordMode + "'";
 
 		stmt = stmt + " GROUP BY " + TABLE + "." + FIELD01 + ", " + TABLE + "." + FIELD02 + ", " + TABLE + "." + FIELD03
 				+ ", " + TABLE + "." + FIELD04 + ", " + TABLE + "." + FIELD06;
@@ -175,8 +190,8 @@ public class PlanningTimeHelper extends GdaDB {
 
 		String stmt = ST_GET_CART;
 
-		stmt = stmt + " WHERE " + FIELD04 + " >= '" + date + "' AND " + FIELD13 + " = '" + codCustomer + "' AND "
-				+ FIELD09 + " = '" + recordMode + "'";
+		stmt = stmt + " WHERE " + TABLE + "." + FIELD04 + " >= '" + date + "' AND " + TABLE + "." + FIELD13 + " = '"
+				+ codCustomer + "' AND " + TABLE + "." + FIELD09 + " = '" + recordMode + "'";
 
 		stmt = stmt + " GROUP BY " + TABLE + "." + FIELD01 + ", " + TABLE + "." + FIELD02 + ", " + TABLE + "." + FIELD03
 				+ ", " + TABLE + "." + FIELD04 + ", " + TABLE + "." + FIELD06;

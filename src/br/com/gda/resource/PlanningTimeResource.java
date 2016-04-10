@@ -78,7 +78,8 @@ public class PlanningTimeResource {
 			@QueryParam("finDate") String finDate) {
 
 		Response response = new PlanningTimeModel().selectPlanningTimeResponse(codOwner, codStore, codEmployee,
-				beginDate, beginTime, group, weekday, codMaterial, recordMode, reservedTo, codCustomer, number, iniDate, finDate);
+				beginDate, beginTime, group, weekday, codMaterial, recordMode, reservedTo, codCustomer, number, iniDate,
+				finDate);
 
 		return response;
 	}
@@ -106,9 +107,10 @@ public class PlanningTimeResource {
 	@POST
 	@Path(PAY_CART)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response payCart(String incomingData, @HeaderParam("codCustomer") Long codCustomer) {
+	public Response payCart(String incomingData, @HeaderParam("codCustomer") Long codCustomer,
+			@HeaderParam("codPayment") String codPayment, @HeaderParam("phone") String phone) {
 
-		return new PlanningTimeModel().payCart(incomingData, codCustomer);
+		return new PlanningTimeModel().payCart(incomingData, codCustomer, codPayment, phone);
 	}
 
 	@GET
