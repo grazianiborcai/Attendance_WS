@@ -34,6 +34,7 @@ public class PlanningTimeHelper extends GdaDB {
 	public static final String FIELD14 = "Number";
 	public static final String FIELD15 = "Part";
 	public static final String FIELD16 = "Reserved_num";
+	public static final String FIELD17 = "Pay_id";
 
 	public static final String ST_IN_ALL_FIELD = "INSERT INTO " + SCHEMA + "." + TABLE + " (" + FIELD01 + ", " + FIELD02
 			+ ", " + FIELD03 + ", " + FIELD04 + ", " + FIELD05 + ", " + FIELD06 + ", " + FIELD07 + ", " + FIELD08 + ", "
@@ -70,8 +71,9 @@ public class PlanningTimeHelper extends GdaDB {
 
 	public static final String ST_GET_CART = "SELECT DISTINCT " + FIELD01 + ", " + FIELD02 + ", " + FIELD03 + ", "
 			+ FIELD04 + ", " + FIELD06 + ", " + FIELD07 + ", " + FIELD08 + ", " + FIELD09 + ", " + FIELD10 + ", "
-			+ FIELD11 + ", " + FIELD12 + ", " + FIELD13 + ", " + FIELD14 + ", " + FIELD15 + ", " + FIELD16 + ", count("
-			+ FIELD06 + ") as " + EmployeeMaterialHelper.FIELD05 + " FROM " + SCHEMA + "." + TABLE;
+			+ FIELD11 + ", " + FIELD12 + ", " + FIELD13 + ", " + FIELD14 + ", " + FIELD15 + ", " + FIELD16 + ", "
+			+ FIELD17 + ", count(" + FIELD06 + ") as " + EmployeeMaterialHelper.FIELD05 + " FROM " + SCHEMA + "."
+			+ TABLE;
 
 	public PlanningTime assignResult(ResultSet resultSet, String from) throws SQLException {
 
@@ -120,6 +122,7 @@ public class PlanningTimeHelper extends GdaDB {
 			planningTime.setPart(resultSet.getInt(TABLE + "." + FIELD15));
 			planningTime.setRate(rate);
 			planningTime.setReservedNum(resultSet.getString(TABLE + "." + FIELD16));
+			planningTime.setPayId(resultSet.getString(TABLE + "." + FIELD17));
 
 		}
 
