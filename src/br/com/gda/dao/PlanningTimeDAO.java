@@ -186,7 +186,7 @@ public class PlanningTimeDAO extends ConnectionBD {
 					exception = new SQLException("Message erro", null, 24);
 				}
 
-				updateStmtT02 = releasePlanningTime(planningTimeList, codCustomer, conn);
+				updateStmtT02 = releasePlanningTime(planningTimeList, codCustomer, conn, RecordMode.ISRESERVED);
 
 				conn.commit();
 				return exception;
@@ -208,7 +208,7 @@ public class PlanningTimeDAO extends ConnectionBD {
 		}
 	}
 
-	public SQLException releasePlanningTime(ArrayList<PlanningTime> planningTimeList, Long codCustomer) {
+	public SQLException releasePlanningTime(ArrayList<PlanningTime> planningTimeList, Long codCustomer, String recordMode) {
 
 		Connection conn = null;
 		PreparedStatement updateStmtT01 = null;
@@ -218,7 +218,7 @@ public class PlanningTimeDAO extends ConnectionBD {
 			conn = getConnection();
 			conn.setAutoCommit(false);
 
-			updateStmtT01 = releasePlanningTime(planningTimeList, codCustomer, conn);
+			updateStmtT01 = releasePlanningTime(planningTimeList, codCustomer, conn, recordMode);
 
 			conn.commit();
 
@@ -237,7 +237,7 @@ public class PlanningTimeDAO extends ConnectionBD {
 	}
 
 	private PreparedStatement releasePlanningTime(ArrayList<PlanningTime> planningTimeList, Long codCustomer,
-			Connection conn) throws SQLException {
+			Connection conn, String recordMode) throws SQLException {
 
 		PreparedStatement updateStmtT01;
 		updateStmtT01 = conn.prepareStatement(PlanningTimeHelper.ST_UP_RELEASE_ITEM);
@@ -255,13 +255,17 @@ public class PlanningTimeDAO extends ConnectionBD {
 			updateStmtT01.setTimestamp(3, Timestamp.valueOf("1900-01-01 00:00:00"));
 			updateStmtT01.setNull(4, Types.BIGINT);
 			updateStmtT01.setNull(5, Types.BIGINT);
+			updateStmtT01.setNull(6, Types.BIGINT);
+			updateStmtT01.setNull(7, Types.VARCHAR);
+			updateStmtT01.setNull(8, Types.VARCHAR);
 
-			updateStmtT01.setLong(6, planningTime.getCodOwner());
-			updateStmtT01.setInt(7, planningTime.getCodStore());
-			updateStmtT01.setInt(8, planningTime.getCodEmployee());
-			updateStmtT01.setDate(9, Date.valueOf(planningTime.getBeginDate()));
-			updateStmtT01.setTime(10, Time.valueOf(planningTime.getBeginTime()));
-			updateStmtT01.setLong(11, codCustomer);
+			updateStmtT01.setLong(9, planningTime.getCodOwner());
+			updateStmtT01.setInt(10, planningTime.getCodStore());
+			updateStmtT01.setInt(11, planningTime.getCodEmployee());
+			updateStmtT01.setDate(12, Date.valueOf(planningTime.getBeginDate()));
+			updateStmtT01.setTime(13, Time.valueOf(planningTime.getBeginTime()));
+			updateStmtT01.setString(14, recordMode);
+			updateStmtT01.setLong(15, codCustomer);
 
 			updateStmtT01.executeUpdate();
 			// }

@@ -27,7 +27,7 @@ public class PlanningTimeResource {
 	private static final String GET_CART = "/getCart";
 	private static final String GET_BOOKED = "/getBooked";
 	private static final String PAY_CART = "/payCart";
-	private static final String REFUND = "/refund/{number}";
+	private static final String REFUND = "/refund";
 
 	@POST
 	@Path(INSERT_PLANNINGTIME)
@@ -113,14 +113,13 @@ public class PlanningTimeResource {
 		return new PlanningTimeModel().payCart(incomingData, codCustomer, codPayment, phone);
 	}
 
-	@GET
+	@POST
 	@Path(REFUND)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response refund(@HeaderParam("codCustomer") Long codCustomer, @PathParam("number") Long number) {
+	public Response refund(String incomingData, @HeaderParam("codCustomer") Long codCustomer) {
 
-		Response response = new PlanningTimeModel().refundResponse(codCustomer, number);
+		return new PlanningTimeModel().refundResponse(incomingData, codCustomer);
 
-		return response;
 	}
 
 }

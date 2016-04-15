@@ -50,9 +50,10 @@ public class PlanningTimeHelper extends GdaDB {
 			+ "' ) ) )";
 
 	public static final String ST_UP_RELEASE_ITEM = "UPDATE " + SCHEMA + "." + TABLE + " SET " + FIELD06 + "=?" + ", "
-			+ FIELD09 + "=?" + ", " + FIELD12 + "=?" + ", " + FIELD13 + "=?" + ", " + FIELD08 + "=?" + " WHERE "
-			+ FIELD01 + "=? AND " + FIELD02 + "=? AND " + FIELD03 + "=? AND " + FIELD04 + "=? AND " + FIELD06
-			+ "=? AND " + FIELD09 + " = '" + RecordMode.ISRESERVED + "' AND " + FIELD13 + "=?";
+			+ FIELD09 + "=?" + ", " + FIELD12 + "=?" + ", " + FIELD13 + "=?" + ", " + FIELD08 + "=?" + ", " + FIELD14
+			+ "=?" + ", " + FIELD16 + "=?" + ", " + FIELD17 + "=?" + " WHERE " + FIELD01 + "=? AND " + FIELD02
+			+ "=? AND " + FIELD03 + "=? AND " + FIELD04 + "=? AND " + FIELD06 + "=? AND " + FIELD09 + "=? AND "
+			+ FIELD13 + "=?";
 
 	public static final String ST_DELETE = "DELETE FROM " + SCHEMA + "." + TABLE;
 

@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.core.Response;
 
 import com.google.gson.Gson;
@@ -37,6 +38,7 @@ import moip.sdk.api.Order;
 import moip.sdk.api.Payment;
 import moip.sdk.api.Phone;
 import moip.sdk.api.Receiver;
+import moip.sdk.api.Refund;
 import moip.sdk.api.TaxDocument;
 import moip.sdk.base.APIContext;
 
@@ -88,11 +90,17 @@ public class PlanningTimeModel extends JsonBuilder {
 		ArrayList<PlanningTime> planningTimeList = (ArrayList<PlanningTime>) jsonToObjectList(incomingData,
 				PlanningTime.class);
 
-		SQLException exception = new PlanningTimeDAO().releasePlanningTime(planningTimeList, customer);
+		SQLException exception = releasePTime(planningTimeList, customer, RecordMode.ISRESERVED);
 
 		JsonObject jsonObject = getJsonObjectUpdate(exception);
 
 		return response(jsonObject);
+	}
+
+	private SQLException releasePTime(ArrayList<PlanningTime> planningTimeList, Long customer, String recordMode) {
+
+		SQLException exception = new PlanningTimeDAO().releasePlanningTime(planningTimeList, customer, recordMode);
+		return exception;
 	}
 
 	public Response deletePlanningTime(List<Long> codOwner, List<Integer> codStore, List<Integer> codEmployee,
@@ -300,20 +308,48 @@ public class PlanningTimeModel extends JsonBuilder {
 					+ String.valueOf(dateTime.getHour()) + String.valueOf(dateTime.getMinute())
 					+ String.valueOf(dateTime.getSecond());
 
-			Order multiOrder = new Order(APIContext.MULTI).setOwnId(numMulti).setCustomer(new Customer().setId(codPayment));
-
+			Order multiOrder = new Order(APIContext.MULTI).setOwnId(numMulti)
+					.setCustomer(new Customer().setId(codPayment));
 
 			Order order = null;
 
 			int i = 0;
 			Store storeBefore = null;
+			BigDecimal t0 = BigDecimal.valueOf(0);
+			BigDecimal t;
+			BigDecimal t2;
+			int ti = 0;
 			for (PlanningTime planningTime : planningTimeListAux) {
 				Store store = storeList.stream().filter(p -> p.getCodOwner().equals(planningTime.getCodOwner())
 						&& p.getCodStore().equals(planningTime.getCodStore())).findAny().get();
 
 				if (storeBefore == null || !store.getCodStore().equals(storeBefore.getCodStore())) {
-					if (storeBefore != null)
+					if (storeBefore != null) {
+
+						if (i == 1) {
+							t = t0.subtract(BigDecimal.valueOf(2));
+							t2 = t.multiply(BigDecimal.valueOf(100));
+
+							ti = t2.intValue();
+							ti = (int) (ti - (ti * 0.068));
+						} else if (i > 1) {
+							// t =
+							// planningTime.getPriceStore().subtract(BigDecimal.valueOf(2));
+							t2 = t0.multiply(BigDecimal.valueOf(100));
+
+							ti = t2.intValue();
+							ti = (int) (ti - (ti * 0.068));
+						}
+
+						order.addReceiver(new Receiver().setMoipAccount(new MoipAccount().setId("MPA-3RDTT72OP4G9"))
+								.setType("PRIMARY"));
+						// if (i == 0)
+						order.addReceiver(new Receiver().setMoipAccount(new MoipAccount().setId(store.getCodPayment()))
+								.setType("SECONDARY").setAmount(new Amount().setFixed(ti)));
+						
 						multiOrder.addOrder(order);
+
+					}
 
 					String num = planningTime.getCodOwner().toString() + planningTime.getCodStore().toString()
 							+ customer.toString() + String.valueOf(dateTime.getYear())
@@ -323,26 +359,49 @@ public class PlanningTimeModel extends JsonBuilder {
 
 					order = new Order();
 					order.setOwnId(num);
-					order.addReceiver(new Receiver().setMoipAccount(new MoipAccount().setId(store.getCodPayment()))
-							.setType("PRIMARY"));
-					if (i == 0)
-						order.addReceiver(new Receiver().setMoipAccount(new MoipAccount().setId("MPA-3RDTT72OP4G9"))
-								.setType("SECONDARY").setAmount(new Amount().setFixed(200)));
+
+					i++;
+					t0 = BigDecimal.valueOf(0);
 				}
 
-//				BigDecimal t = planningTime.getPriceStore().subtract(BigDecimal.valueOf(2));
-				BigDecimal t2 = planningTime.getPriceStore().multiply(BigDecimal.valueOf(100));
-				
-				int ti = t2.intValue();
-				
+				// BigDecimal t =
+				// planningTime.getPriceStore().subtract(BigDecimal.valueOf(2));
+				BigDecimal t3 = planningTime.getPriceStore().multiply(BigDecimal.valueOf(100));
+
+				int ti2 = t3.intValue();
+
 				order.addItem(new Item().setProduct(planningTime.getCodMaterial().toString()).setQuantity(1)
-						.setDetail(planningTime.getCodMaterial().toString()).setPrice(ti));
+						.setDetail(planningTime.getCodMaterial().toString()).setPrice(ti2));
 
 				storeBefore = store;
-				i++;
+
+				t0 = t0.add(planningTime.getPriceStore());
+
 			}
 
+			if (i == 1) {
+				t = t0.subtract(BigDecimal.valueOf(2));
+				t2 = t.multiply(BigDecimal.valueOf(100));
+
+				ti = t2.intValue();
+				ti = (int) (ti - (ti * 0.068));
+			} else if (i > 1) {
+				// t =
+				// planningTime.getPriceStore().subtract(BigDecimal.valueOf(2));
+				t2 = t0.multiply(BigDecimal.valueOf(100));
+
+				ti = t2.intValue();
+				ti = (int) (ti - (ti * 0.068));
+			}
+
+			order.addReceiver(
+					new Receiver().setMoipAccount(new MoipAccount().setId("MPA-3RDTT72OP4G9")).setType("PRIMARY"));
+
+			order.addReceiver(new Receiver().setMoipAccount(new MoipAccount().setId(storeBefore.getCodPayment()))
+					.setType("SECONDARY").setAmount(new Amount().setFixed(ti)));
+			
 			multiOrder.addOrder(order);
+			
 
 			Order multiOrderCreated = null;
 			Payment paymentCreated = null;
@@ -443,11 +502,32 @@ public class PlanningTimeModel extends JsonBuilder {
 		}
 	}
 
-	public Response refundResponse(Long codCustomer, Long number) {
+	public Response refundResponse(String incomingData, Long codCustomer) {
 
-		SQLException exception = new SQLException("Estorno do pagamento solicitado", null, 200);
+		@SuppressWarnings("unchecked")
+		ArrayList<PlanningTime> planningTimeList = (ArrayList<PlanningTime>) jsonToObjectList(incomingData,
+				PlanningTime.class);
+
+		ConcurrentHashMap<String, String> sdkConfig = new ConcurrentHashMap<String, String>();
+		sdkConfig.put("mode", "sandbox");
+
+		APIContext apiContext = new APIContext("8QLV3TOXIP0AND15ZOB5R4X5T0OYWHVR",
+				"GLYGGCHTSEQO0LCUL9IJNQTEGNG2NZOHA53VRGYC", "OAuth cl6fpbl7fyqiqljnd8apq75satol8q9");
+		apiContext.setConfigurationMap(sdkConfig);
+
+		Refund refund = null;
+		SQLException exception = null;
+		try {
+			refund = new Refund(planningTimeList.get(0).getPayId()).create(apiContext);
+			exception = releasePTime(planningTimeList, codCustomer, RecordMode.ISPAYED);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			exception = new SQLException(e.getMessage(), null, 5000);
+		}
 
 		JsonObject jsonObject = getJsonObjectUpdate(exception);
+		jsonObject.addProperty("refund", refund.getId());
 
 		return response(jsonObject);
 	}
