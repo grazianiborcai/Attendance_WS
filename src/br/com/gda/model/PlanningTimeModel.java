@@ -393,7 +393,7 @@ public class PlanningTimeModel extends JsonBuilder {
 				ti = t2.intValue();
 				ti = (int) (ti - (ti * 0.068));
 			}
-
+//
 			order.addReceiver(
 					new Receiver().setMoipAccount(new MoipAccount().setId("MPA-3RDTT72OP4G9")).setType("PRIMARY"));
 
