@@ -15,6 +15,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.google.gson.Gson;
@@ -415,15 +416,33 @@ public class PlanningTimeModel extends JsonBuilder {
 
 			moip.sdk.api.FundingInstrument fundingInstrument = new moip.sdk.api.FundingInstrument();
 			fundingInstrument.setCreditCard(creditCard);
-
+//			JsonObject jsonObject2 = new JsonObject();;
+//			jsonObject2.add(RESULTS, new Gson().toJsonTree(multiOrder));
+//			return response(jsonObject2);
 			try {
 				multiOrderCreated = multiOrder.create(apiContext);
+				
+//				if (multiOrderCreated.getOwnId() == null) {
+//					
+//					jsonObject2.addProperty("error", multiOrderCreated.getErrors().get(0).getDescription());
+////					return response(jsonObject2);
+//					return Response.status(Response.Status.OK).entity("teste1   ").type(MediaType.APPLICATION_JSON)
+//							.build();
+//				} else {
+//					jsonObject2.add(RESULTS, new Gson().toJsonTree(multiOrder));
+////					return response(jsonObject2);
+//					return Response.status(Response.Status.OK).entity("teste2   ").type(MediaType.APPLICATION_JSON)
+//							.build();
+//				}
 				paymentCreated = new Payment(APIContext.MULTI, multiOrderCreated.getId()).setInstallmentCount(1)
 						.setFundingInstrument(fundingInstrument).createAndAuthorized(apiContext);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				return Response.status(Response.Status.OK).entity(e.getMessage()).type(MediaType.APPLICATION_JSON)
+						.build();
 			}
+			
 
 			List<Order> orderList = multiOrderCreated.getOrders();
 
