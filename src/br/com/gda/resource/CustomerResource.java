@@ -36,9 +36,11 @@ public class CustomerResource {
 	@POST
 	@Path(UPDATE_CUSTOMER)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response updateCustomer(String incomingData) {
+	public Response updateCustomer(String incomingData, @HeaderParam("codCustomer") Long codCustomer,
+			@HeaderParam("email") String email, @HeaderParam("password") String password,
+			@HeaderParam("codPayment") String codPayment) {
 
-		return new CustomerModel().updateCustomer(incomingData);
+		return new CustomerModel().updateCustomer(incomingData, codCustomer, email, password, codPayment);
 	}
 
 	@DELETE
@@ -79,11 +81,12 @@ public class CustomerResource {
 
 		return new CustomerModel().selectCustomerResponse(email, password);
 	}
-	
+
 	@GET
 	@Path(CHANGE_PASSWORD)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response changePassword(@HeaderParam("codCustomer") Long codCustomer, @HeaderParam("newPassword") String newPassword) {
+	public Response changePassword(@HeaderParam("codCustomer") Long codCustomer,
+			@HeaderParam("newPassword") String newPassword) {
 
 		return new CustomerModel().changePassword(codCustomer, newPassword);
 	}

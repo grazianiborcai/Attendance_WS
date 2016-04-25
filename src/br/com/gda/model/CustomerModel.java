@@ -56,7 +56,7 @@ public class CustomerModel extends JsonBuilder {
 				moip.sdk.api.Customer customerMoipCreated;
 				try {
 					customerMoipCreated = customerMoip.create(apiContext);
-					
+
 					String id = customerMoipCreated.getId();
 
 					customer.setCodPayment(id);
@@ -84,9 +84,19 @@ public class CustomerModel extends JsonBuilder {
 		return response(jsonObject);
 	}
 
-	public Response updateCustomer(String incomingData) {
+	public Response updateCustomer(String incomingData, Long codCustomer, String email, String password,
+			String codPayment) {
 
-		SQLException exception = new CustomerDAO().updateCustomer(jsonToCustomerList(incomingData));
+		ArrayList<Customer> customerList = jsonToCustomerList(incomingData);
+
+		customerList.get(0).setCodCustomer(codCustomer);
+		customerList.get(0).setEmail(email);
+		customerList.get(0).setCodPayment(codPayment);
+
+		if (customerList.get(0).getPassword() == null || customerList.get(0).getPassword().isEmpty())
+			customerList.get(0).setPassword(password);
+
+		SQLException exception = new CustomerDAO().updateCustomer(customerList);
 
 		JsonObject jsonObject = getJsonObjectUpdate(exception);
 
