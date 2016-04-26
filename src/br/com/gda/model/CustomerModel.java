@@ -33,55 +33,69 @@ public class CustomerModel extends JsonBuilder {
 
 		if (exception.getErrorCode() == 200) {
 
-			ArrayList<Customer> customerUpdateList = new ArrayList<Customer>();
-
-			ConcurrentHashMap<String, String> sdkConfig = new ConcurrentHashMap<String, String>();
-			sdkConfig.put("mode", "sandbox");
-
-			APIContext apiContext = new APIContext("8QLV3TOXIP0AND15ZOB5R4X5T0OYWHVR",
-					"GLYGGCHTSEQO0LCUL9IJNQTEGNG2NZOHA53VRGYC", "OAuth cl6fpbl7fyqiqljnd8apq75satol8q9");
-			apiContext.setConfigurationMap(sdkConfig);
-
-			moip.sdk.api.Customer customerMoip = new moip.sdk.api.Customer();
-			for (Customer customer : customerList) {
-				customerMoip.setOwnId(customer.getCodCustomer().toString());
-				customerMoip.setFullname(customer.getName());
-				customerMoip.setEmail(customer.getEmail());
-				customerMoip.setBirthDate(customer.getBornDate().toString());
-				String phone = customer.getPhone();
-
-				customerMoip.setPhone(new Phone().setCountryCode("55").setAreaCode(phone.substring(1, 3))
-						.setNumber(phone.substring(5, 14)));
-
-				moip.sdk.api.Customer customerMoipCreated;
-				try {
-					customerMoipCreated = customerMoip.create(apiContext);
-
-					String id = customerMoipCreated.getId();
-
-					customer.setCodPayment(id);
-					customer.setRecordMode(RecordMode.ISUPDATED);
-
-					customerUpdateList.add(customer);
-
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					return Response.status(Response.Status.OK).entity(e.getMessage()).type(MediaType.APPLICATION_JSON)
-							.build();
-				}
+			try {
+				createMoipCustomer(customerList);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-
-			SQLException exceptionUpdate = new CustomerDAO().updateCustomer(customerUpdateList);
-
-			if (exceptionUpdate.getErrorCode() != 200)
-				exceptionUpdate.printStackTrace();
 
 		}
 
 		JsonObject jsonObject = getJsonObjectUpdate(exception);
 
 		return response(jsonObject);
+	}
+
+	public ArrayList<Customer> createMoipCustomer(ArrayList<Customer> customerList) throws SQLException {
+		ArrayList<Customer> customerUpdateList = new ArrayList<Customer>();
+
+		ConcurrentHashMap<String, String> sdkConfig = new ConcurrentHashMap<String, String>();
+		sdkConfig.put("mode", "sandbox");
+
+		APIContext apiContext = new APIContext("8QLV3TOXIP0AND15ZOB5R4X5T0OYWHVR",
+				"GLYGGCHTSEQO0LCUL9IJNQTEGNG2NZOHA53VRGYC", "OAuth cl6fpbl7fyqiqljnd8apq75satol8q9");
+		apiContext.setConfigurationMap(sdkConfig);
+
+		moip.sdk.api.Customer customerMoip = new moip.sdk.api.Customer();
+		for (Customer customer : customerList) {
+			customerMoip.setOwnId(customer.getCodCustomer().toString());
+			customerMoip.setFullname(customer.getName());
+			customerMoip.setEmail(customer.getEmail());
+			customerMoip.setBirthDate(customer.getBornDate().toString());
+			String phone = customer.getPhone();
+
+			customerMoip.setPhone(new Phone().setCountryCode("55").setAreaCode(phone.substring(1, 3))
+					.setNumber(phone.substring(5, 14)));
+
+			moip.sdk.api.Customer customerMoipCreated;
+			try {
+				customerMoipCreated = customerMoip.create(apiContext);
+
+				String id = customerMoipCreated.getId();
+
+				customer.setCodPayment(id);
+				customer.setRecordMode(RecordMode.ISUPDATED);
+
+				customerUpdateList.add(customer);
+
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new SQLException(e.getMessage(), null, 55);
+//				return Response.status(Response.Status.OK).entity(e.getMessage()).type(MediaType.APPLICATION_JSON)
+//						.build();
+			}
+		}
+
+		SQLException exceptionUpdate = new CustomerDAO().updateCustomer(customerUpdateList);
+
+		if (exceptionUpdate.getErrorCode() != 200) {
+			exceptionUpdate.printStackTrace();
+			throw exceptionUpdate;
+		}
+
+		return customerUpdateList;
 	}
 
 	public Response updateCustomer(String incomingData, Long codCustomer, String email, String password,

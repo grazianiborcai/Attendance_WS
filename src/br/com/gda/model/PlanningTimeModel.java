@@ -23,6 +23,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import br.com.gda.dao.CustomerDAO;
 import br.com.gda.dao.PlanningTimeDAO;
 import br.com.gda.dao.StoreDAO;
 import br.com.gda.helper.PayCart;
@@ -302,12 +303,34 @@ public class PlanningTimeModel extends JsonBuilder {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				JsonObject jsonObject = getJsonObjectUpdate(e);
+				return response(jsonObject);
 			}
 
 			String numMulti = customer.toString() + String.valueOf(dateTime.getYear())
 					+ String.valueOf(dateTime.getMonthValue()) + String.valueOf(dateTime.getDayOfMonth())
 					+ String.valueOf(dateTime.getHour()) + String.valueOf(dateTime.getMinute())
 					+ String.valueOf(dateTime.getSecond());
+
+			if (codPayment == null || codPayment.isEmpty()) {
+				List<Long> codCustomer = new ArrayList<Long>();
+				codCustomer.add(customer);
+				ArrayList<br.com.gda.helper.Customer> customerList = null;
+				ArrayList<br.com.gda.helper.Customer> customerUpdatedList = null;
+				try {
+					CustomerModel customerModel = new CustomerModel();
+					customerList = customerModel.selectCustomer(codCustomer, null, null, null, null, null, null, null,
+							null, null, null, null, null, null);
+					customerUpdatedList = customerModel.createMoipCustomer(customerList);
+					codPayment = customerUpdatedList.get(0).getCodPayment();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					JsonObject jsonObject = getJsonObjectUpdate(e);
+					return response(jsonObject);
+				}
+
+			}
 
 			Order multiOrder = new Order(APIContext.MULTI).setOwnId(numMulti)
 					.setCustomer(new Customer().setId(codPayment));
@@ -347,7 +370,7 @@ public class PlanningTimeModel extends JsonBuilder {
 						// if (i == 0)
 						order.addReceiver(new Receiver().setMoipAccount(new MoipAccount().setId(store.getCodPayment()))
 								.setType("SECONDARY").setAmount(new Amount().setFixed(ti)));
-						
+
 						multiOrder.addOrder(order);
 
 					}
@@ -394,15 +417,14 @@ public class PlanningTimeModel extends JsonBuilder {
 				ti = t2.intValue();
 				ti = (int) (ti - (ti * 0.068));
 			}
-//
+			//
 			order.addReceiver(
 					new Receiver().setMoipAccount(new MoipAccount().setId("MPA-3RDTT72OP4G9")).setType("PRIMARY"));
 
 			order.addReceiver(new Receiver().setMoipAccount(new MoipAccount().setId(storeBefore.getCodPayment()))
 					.setType("SECONDARY").setAmount(new Amount().setFixed(ti)));
-			
+
 			multiOrder.addOrder(order);
-			
 
 			Order multiOrderCreated = null;
 			Payment paymentCreated = null;
@@ -416,33 +438,18 @@ public class PlanningTimeModel extends JsonBuilder {
 
 			moip.sdk.api.FundingInstrument fundingInstrument = new moip.sdk.api.FundingInstrument();
 			fundingInstrument.setCreditCard(creditCard);
-//			JsonObject jsonObject2 = new JsonObject();;
-//			jsonObject2.add(RESULTS, new Gson().toJsonTree(multiOrder));
-//			return response(jsonObject2);
+
 			try {
 				multiOrderCreated = multiOrder.create(apiContext);
-				
-//				if (multiOrderCreated.getOwnId() == null) {
-//					
-//					jsonObject2.addProperty("error", multiOrderCreated.getErrors().get(0).getDescription());
-////					return response(jsonObject2);
-//					return Response.status(Response.Status.OK).entity("teste1   ").type(MediaType.APPLICATION_JSON)
-//							.build();
-//				} else {
-//					jsonObject2.add(RESULTS, new Gson().toJsonTree(multiOrder));
-////					return response(jsonObject2);
-//					return Response.status(Response.Status.OK).entity("teste2   ").type(MediaType.APPLICATION_JSON)
-//							.build();
-//				}
 				paymentCreated = new Payment(APIContext.MULTI, multiOrderCreated.getId()).setInstallmentCount(1)
 						.setFundingInstrument(fundingInstrument).createAndAuthorized(apiContext);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				return Response.status(Response.Status.OK).entity(e.getMessage()).type(MediaType.APPLICATION_JSON)
-						.build();
+				exception = new SQLException(e.getMessage(), null, 55);
+				JsonObject jsonObject = getJsonObjectUpdate(exception);
+				return response(jsonObject);
 			}
-			
 
 			List<Order> orderList = multiOrderCreated.getOrders();
 
