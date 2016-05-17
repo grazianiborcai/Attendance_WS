@@ -2,6 +2,9 @@ package br.com.gda.model;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -59,7 +62,11 @@ public class CustomerModel extends JsonBuilder {
 
 		moip.sdk.api.Customer customerMoip = new moip.sdk.api.Customer();
 		for (Customer customer : customerList) {
-			customerMoip.setOwnId(customer.getCodCustomer().toString());
+			LocalDateTime dateTime = ZonedDateTime.now(ZoneOffset.UTC).toLocalDateTime();
+			customerMoip.setOwnId(customer.getCodCustomer().toString() + String.valueOf(dateTime.getYear())
+			+ String.valueOf(dateTime.getMonthValue()) + String.valueOf(dateTime.getDayOfMonth())
+			+ String.valueOf(dateTime.getHour()) + String.valueOf(dateTime.getMinute())
+			+ String.valueOf(dateTime.getSecond()));
 			customerMoip.setFullname(customer.getName());
 			customerMoip.setEmail(customer.getEmail());
 			customerMoip.setBirthDate(customer.getBornDate().toString());

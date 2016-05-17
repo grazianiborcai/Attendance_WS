@@ -343,6 +343,8 @@ public class PlanningTimeModel extends JsonBuilder {
 			BigDecimal t;
 			BigDecimal t2;
 			int ti = 0;
+			int preco = 0;
+			int tp = 0;
 			for (PlanningTime planningTime : planningTimeListAux) {
 				Store store = storeList.stream().filter(p -> p.getCodOwner().equals(planningTime.getCodOwner())
 						&& p.getCodStore().equals(planningTime.getCodStore())).findAny().get();
@@ -355,6 +357,7 @@ public class PlanningTimeModel extends JsonBuilder {
 							t2 = t.multiply(BigDecimal.valueOf(100));
 
 							ti = t2.intValue();
+							tp = t2.intValue();
 							ti = (int) (ti - (ti * 0.068));
 						} else if (i > 1) {
 							// t =
@@ -362,12 +365,15 @@ public class PlanningTimeModel extends JsonBuilder {
 							t2 = t0.multiply(BigDecimal.valueOf(100));
 
 							ti = t2.intValue();
+							tp = t2.intValue();
 							ti = (int) (ti - (ti * 0.068));
 						}
+						
+						preco = tp - ti;
 
 						order.addReceiver(new Receiver().setMoipAccount(new MoipAccount().setId("MPA-3RDTT72OP4G9"))
-								.setType("PRIMARY"));
-						// if (i == 0)
+								.setType("PRIMARY").setAmount(new Amount().setFixed(preco)));
+						// if (i == 0).setAmount(new Amount().setFixed(preco))
 						order.addReceiver(new Receiver().setMoipAccount(new MoipAccount().setId(store.getCodPayment()))
 								.setType("SECONDARY").setAmount(new Amount().setFixed(ti)));
 
@@ -408,6 +414,7 @@ public class PlanningTimeModel extends JsonBuilder {
 				t2 = t.multiply(BigDecimal.valueOf(100));
 
 				ti = t2.intValue();
+				tp = t2.intValue();
 				ti = (int) (ti - (ti * 0.068));
 			} else if (i > 1) {
 				// t =
@@ -415,12 +422,16 @@ public class PlanningTimeModel extends JsonBuilder {
 				t2 = t0.multiply(BigDecimal.valueOf(100));
 
 				ti = t2.intValue();
+				tp = t2.intValue();
 				ti = (int) (ti - (ti * 0.068));
 			}
 			//
+			
+			preco = tp - ti;
+			
 			order.addReceiver(
-					new Receiver().setMoipAccount(new MoipAccount().setId("MPA-3RDTT72OP4G9")).setType("PRIMARY"));
-
+					new Receiver().setMoipAccount(new MoipAccount().setId("MPA-3RDTT72OP4G9")).setType("PRIMARY").setAmount(new Amount().setFixed(preco)));
+//			.setAmount(new Amount().setFixed(preco))
 			order.addReceiver(new Receiver().setMoipAccount(new MoipAccount().setId(storeBefore.getCodPayment()))
 					.setType("SECONDARY").setAmount(new Amount().setFixed(ti)));
 
