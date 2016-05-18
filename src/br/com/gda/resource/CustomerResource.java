@@ -1,6 +1,13 @@
 package br.com.gda.resource;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Locale;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -13,6 +20,10 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.google.gson.stream.JsonReader;
+
+import br.com.gda.helper.Customer;
+import br.com.gda.helper.Weekday;
 import br.com.gda.model.CustomerModel;
 
 @Path("/Customer")
@@ -30,6 +41,57 @@ public class CustomerResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response insertCustomer(String incomingData) {
 
+//		Class<?> c = Customer.class;
+//		StringReader r = new StringReader(incomingData.trim());
+//		JsonReader reader  = new JsonReader(r);
+//		String name = null;
+//		try {
+//			reader.beginObject();
+//			Object t = c.newInstance();
+//        while (reader.hasNext()) {
+//            name = reader.nextName();
+//            String mname = "set" + name.replace(name.charAt(0), name.toUpperCase().charAt(0));
+//            Method[] methods = c.getMethods();
+//            boolean v = false;
+//    		for (Method method : methods) {
+//    			String mn = method.getName();
+//    			if (!mn.equals(mname)) {
+//    			    continue;
+//    			}
+//    			System.out.println(mn);
+//    			Parameter[] parameters = method.getParameters();
+//    			Parameter parameter = parameters[0];
+//    			if (parameter.getType() == String.class) {
+//    				method.invoke(t, reader.nextString());
+//    				v = true; 
+//    			}
+//    		}
+//    		    	
+//    		if (!v)
+//    			reader.skipValue();
+//    		else
+//    			v = false;
+//        }
+//        reader.endObject();
+//		} catch (IOException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		} catch (InstantiationException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IllegalAccessException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IllegalArgumentException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (InvocationTargetException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		
+		
 		return new CustomerModel().insertCustomer(incomingData);
 	}
 
@@ -39,7 +101,7 @@ public class CustomerResource {
 	public Response updateCustomer(String incomingData, @HeaderParam("codCustomer") Long codCustomer,
 			@HeaderParam("email") String email, @HeaderParam("password") String password,
 			@HeaderParam("codPayment") String codPayment) {
-
+		
 		return new CustomerModel().updateCustomer(incomingData, codCustomer, email, password, codPayment);
 	}
 
