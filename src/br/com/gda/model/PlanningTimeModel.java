@@ -453,16 +453,19 @@ public class PlanningTimeModel extends JsonBuilder {
 			try {
 				multiOrderCreated = multiOrder.create(apiContext);
 				if (multiOrderCreated.getId() == null && multiOrderCreated.getErrors() != null)
-					throw new IOException(multiOrderCreated.getErrors().get(0).getDescription());
+					throw new SQLException(multiOrderCreated.getErrors().get(0).getDescription(), null, 44);
 				paymentCreated = new Payment(APIContext.MULTI, multiOrderCreated.getId()).setInstallmentCount(1)
 						.setFundingInstrument(fundingInstrument).createAndAuthorized(apiContext);
 				if (paymentCreated.getId() == null && paymentCreated.getErrors() != null)
-					throw new IOException(paymentCreated.getErrors().get(0).getDescription());
+					throw new SQLException(paymentCreated.getErrors().get(0).getDescription(), null, 44);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				exception = new SQLException(e.getMessage(), null, 55);
 				JsonObject jsonObject = getJsonObjectUpdate(exception);
+				return response(jsonObject);
+			} catch (SQLException e) {
+				JsonObject jsonObject = getJsonObjectUpdate(e);
 				return response(jsonObject);
 			}
 
