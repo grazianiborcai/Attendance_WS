@@ -368,7 +368,7 @@ public class PlanningTimeModel extends JsonBuilder {
 							tp = t2.intValue();
 							ti = (int) (ti - (ti * 0.068));
 						}
-						
+
 						preco = tp - ti;
 
 						order.addReceiver(new Receiver().setMoipAccount(new MoipAccount().setId("MPA-3RDTT72OP4G9"))
@@ -426,12 +426,12 @@ public class PlanningTimeModel extends JsonBuilder {
 				ti = (int) (ti - (ti * 0.068));
 			}
 			//
-			
+
 			preco = tp - ti;
-			
-			order.addReceiver(
-					new Receiver().setMoipAccount(new MoipAccount().setId("MPA-3RDTT72OP4G9")).setType("PRIMARY").setAmount(new Amount().setFixed(preco)));
-//			.setAmount(new Amount().setFixed(preco))
+
+			order.addReceiver(new Receiver().setMoipAccount(new MoipAccount().setId("MPA-3RDTT72OP4G9"))
+					.setType("PRIMARY").setAmount(new Amount().setFixed(preco)));
+			// .setAmount(new Amount().setFixed(preco))
 			order.addReceiver(new Receiver().setMoipAccount(new MoipAccount().setId(storeBefore.getCodPayment()))
 					.setType("SECONDARY").setAmount(new Amount().setFixed(ti)));
 
@@ -452,12 +452,18 @@ public class PlanningTimeModel extends JsonBuilder {
 
 			try {
 				multiOrderCreated = multiOrder.create(apiContext);
-				if (multiOrderCreated.getId() == null && multiOrderCreated.getErrors() != null)
-					throw new SQLException(multiOrderCreated.getErrors().get(0).getDescription(), null, 44);
+				if (multiOrderCreated.getId() == null)
+					if (multiOrderCreated.getErrors() != null)
+						throw new SQLException(multiOrderCreated.getErrors().get(0).getDescription(), null, 44);
+					else if (multiOrderCreated.getERROR() != null)
+						throw new SQLException(multiOrderCreated.getERROR(), null, 44);
 				paymentCreated = new Payment(APIContext.MULTI, multiOrderCreated.getId()).setInstallmentCount(1)
 						.setFundingInstrument(fundingInstrument).createAndAuthorized(apiContext);
-				if (paymentCreated.getId() == null && paymentCreated.getErrors() != null)
-					throw new SQLException(paymentCreated.getErrors().get(0).getDescription(), null, 44);
+				if (paymentCreated.getId() == null)
+					if (paymentCreated.getErrors() != null)
+						throw new SQLException(paymentCreated.getErrors().get(0).getDescription(), null, 44);
+					else if (paymentCreated.getERROR() != null)
+						throw new SQLException(paymentCreated.getERROR(), null, 44);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -1,5 +1,6 @@
 package br.com.gda.resource;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -14,10 +15,13 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.google.gson.JsonObject;
+
+import br.com.gda.model.JsonBuilder;
 import br.com.gda.model.PlanningTimeModel;
 
 @Path("/PlanningTime")
-public class PlanningTimeResource {
+public class PlanningTimeResource extends JsonBuilder {
 
 	private static final String INSERT_PLANNINGTIME = "/insertPlanningTime";
 	private static final String RESERVE_PLANNINGTIME = "/reservePlanningTime";
@@ -28,6 +32,7 @@ public class PlanningTimeResource {
 	private static final String GET_BOOKED = "/getBooked";
 	private static final String PAY_CART = "/payCart";
 	private static final String REFUND = "/refund";
+	private static final String GET_FEE = "/getFee";
 
 	@POST
 	@Path(INSERT_PLANNINGTIME)
@@ -120,6 +125,24 @@ public class PlanningTimeResource {
 
 		return new PlanningTimeModel().refundResponse(incomingData, codCustomer);
 
+	}
+
+	@GET
+	@Path(GET_FEE)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getTax(@QueryParam("codOwner") List<Long> codOwner,
+			@QueryParam("codStore") List<Integer> codStore) {
+
+		JsonObject jsonObject = new JsonObject();
+		if ( codOwner != null && codOwner.size() != 0 && codStore != null && codStore.size() != 0) {
+			jsonObject.addProperty("value", 2.00);
+			jsonObject.addProperty("currency", "BRL");
+		} else {
+			SQLException exception = new SQLException("Please use the mandatory query parameters: codOwner and codStore", null, 88);
+			jsonObject = getJsonObjectUpdate(exception);
+		}
+		
+		return response(jsonObject);
 	}
 
 }
