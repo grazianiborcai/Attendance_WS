@@ -452,8 +452,12 @@ public class PlanningTimeModel extends JsonBuilder {
 
 			try {
 				multiOrderCreated = multiOrder.create(apiContext);
+				if (multiOrderCreated.getId() == null && multiOrderCreated.getErrors() != null)
+					throw new IOException(multiOrderCreated.getErrors().get(0).getDescription());
 				paymentCreated = new Payment(APIContext.MULTI, multiOrderCreated.getId()).setInstallmentCount(1)
 						.setFundingInstrument(fundingInstrument).createAndAuthorized(apiContext);
+				if (paymentCreated.getId() == null && paymentCreated.getErrors() != null)
+					throw new IOException(paymentCreated.getErrors().get(0).getDescription());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
