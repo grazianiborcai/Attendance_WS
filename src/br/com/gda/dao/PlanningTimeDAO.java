@@ -208,7 +208,8 @@ public class PlanningTimeDAO extends ConnectionBD {
 		}
 	}
 
-	public SQLException releasePlanningTime(ArrayList<PlanningTime> planningTimeList, Long codCustomer, String recordMode) {
+	public SQLException releasePlanningTime(ArrayList<PlanningTime> planningTimeList, Long codCustomer,
+			String recordMode) {
 
 		Connection conn = null;
 		PreparedStatement updateStmtT01 = null;
@@ -327,6 +328,53 @@ public class PlanningTimeDAO extends ConnectionBD {
 			selectStmt = conn.prepareStatement(planningTimeHelper.prepareSelect(codOwner, codStore, codEmployee,
 					beginDate, beginTime, group, weekday, codMaterial, recordMode, reservedTo, codCustomer, number,
 					dateTime.toString(), iniDate, finDate));
+
+			resultSet = selectStmt.executeQuery();
+
+			while (resultSet.next()) {
+
+				PlanningTime planningTime = planningTimeHelper.assignResult(resultSet,
+						PlanningTimeHelper.SELECT_PLANNING_TIME);
+
+				if (planningTime != null)
+					planningTimeList.add(planningTime);
+			}
+
+			return planningTimeList;
+
+		} catch (SQLException e) {
+			throw e;
+		} finally {
+			closeConnection(conn, selectStmt, resultSet);
+		}
+	}
+
+	public ArrayList<PlanningTime> selectPlanningTimeLoc(List<Long> codOwner, List<Integer> codStore,
+			List<Integer> codEmployee, List<String> beginDate, List<String> beginTime, List<Integer> group,
+			List<Integer> weekday, List<Integer> codMaterial, List<String> recordMode, List<String> reservedTo,
+			List<Long> codCustomer, List<Long> number, String iniDate, String finDate, Float latitude, Float longitude)
+			throws SQLException {
+
+		ArrayList<PlanningTime> planningTimeList = new ArrayList<PlanningTime>();
+		Connection conn = null;
+		PreparedStatement selectStmt = null;
+		ResultSet resultSet = null;
+
+		try {
+
+			conn = getConnection();
+
+			PlanningTimeHelper planningTimeHelper = new PlanningTimeHelper();
+
+			LocalDateTime dateTime = ZonedDateTime.now(ZoneOffset.UTC).toLocalDateTime();
+
+			selectStmt = conn.prepareStatement(planningTimeHelper.prepareSelectLoc(codOwner, codStore, codEmployee,
+					beginDate, beginTime, group, weekday, codMaterial, recordMode, reservedTo, codCustomer, number,
+					dateTime.toString(), iniDate, finDate));
+			
+			selectStmt.setFloat(1, latitude);
+			selectStmt.setFloat(2, longitude);
+			selectStmt.setFloat(3, latitude);
 
 			resultSet = selectStmt.executeQuery();
 

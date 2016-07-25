@@ -70,8 +70,7 @@ public class StoreDAO extends ConnectionBD {
 				return e1;
 			}
 		} finally {
-			closeConnection(conn, insertStmtT01, insertStmtT03, insertStmtT04,
-					variableStmt);
+			closeConnection(conn, insertStmtT01, insertStmtT03, insertStmtT04, variableStmt);
 		}
 
 	}
@@ -278,9 +277,8 @@ public class StoreDAO extends ConnectionBD {
 				return e1;
 			}
 		} finally {
-			closeConnection(conn, deleteStmtT01, deleteStmtT02, deleteStmtT03, insertStmtT01,
-					insertStmtT03, insertStmtT04, updateStmtT01,
-					updateStmtT04, updateStmtT05, updateStmtT06, updateStmtT07,
+			closeConnection(conn, deleteStmtT01, deleteStmtT02, deleteStmtT03, insertStmtT01, insertStmtT03,
+					insertStmtT04, updateStmtT01, updateStmtT04, updateStmtT05, updateStmtT06, updateStmtT07,
 					variableStmt);
 		}
 	}
@@ -324,7 +322,7 @@ public class StoreDAO extends ConnectionBD {
 			List<String> inscEstadual, List<String> inscMunicipal, List<String> razaoSocial, List<String> name,
 			List<String> address1, List<String> address2, List<Integer> postalcode, List<String> city,
 			List<String> country, List<String> state, List<String> phone, List<String> codCurr, List<String> recordMode)
-					throws SQLException {
+			throws SQLException {
 
 		ArrayList<Store> storeList = new ArrayList<Store>();
 		Connection conn = null;
@@ -340,6 +338,47 @@ public class StoreDAO extends ConnectionBD {
 			selectStmt = conn.prepareStatement(
 					storeHelper.prepareSelect(codOwner, codStore, cnpj, inscEstadual, inscMunicipal, razaoSocial, name,
 							address1, address2, postalcode, city, country, state, phone, codCurr, recordMode));
+
+			resultSet = selectStmt.executeQuery();
+
+			while (resultSet.next()) {
+
+				storeList.add(storeHelper.assignResult(resultSet));
+			}
+
+			return storeList;
+
+		} catch (SQLException e) {
+			throw e;
+		} finally {
+			closeConnection(conn, selectStmt, resultSet);
+		}
+	}
+
+	public ArrayList<Store> selectStoreLoc(List<Long> codOwner, List<Integer> codStore, List<String> cnpj,
+			List<String> inscEstadual, List<String> inscMunicipal, List<String> razaoSocial, List<String> name,
+			List<String> address1, List<String> address2, List<Integer> postalcode, List<String> city,
+			List<String> country, List<String> state, List<String> phone, List<String> codCurr, List<String> recordMode,
+			Float latitude, Float longitude) throws SQLException {
+
+		ArrayList<Store> storeList = new ArrayList<Store>();
+		Connection conn = null;
+		PreparedStatement selectStmt = null;
+		ResultSet resultSet = null;
+
+		try {
+
+			conn = getConnection();
+
+			StoreHelper storeHelper = new StoreHelper();
+
+			selectStmt = conn.prepareStatement(
+					storeHelper.prepareSelectLoc(codOwner, codStore, cnpj, inscEstadual, inscMunicipal, razaoSocial, name,
+							address1, address2, postalcode, city, country, state, phone, codCurr, recordMode));
+			
+			selectStmt.setFloat(1, latitude);
+			selectStmt.setFloat(2, longitude);
+			selectStmt.setFloat(3, latitude);
 
 			resultSet = selectStmt.executeQuery();
 

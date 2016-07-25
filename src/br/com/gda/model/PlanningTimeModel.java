@@ -165,6 +165,55 @@ public class PlanningTimeModel extends JsonBuilder {
 
 	}
 
+	public ArrayList<PlanningTime> selectPlanningTimeLoc(List<Long> codOwner, List<Integer> codStore,
+			List<Integer> codEmployee, List<String> beginDate, List<String> beginTime, List<Integer> group,
+			List<Integer> weekday, List<Integer> codMaterial, List<String> recordMode, List<String> reservedTo,
+			List<Long> codCustomer, List<Long> number, String iniDate, String finDate, Float latitude, Float longitude)
+			throws SQLException {
+
+		ArrayList<PlanningTime> planningTime = new PlanningTimeDAO().selectPlanningTimeLoc(codOwner, codStore,
+				codEmployee, beginDate, beginTime, group, weekday, codMaterial, recordMode, reservedTo, codCustomer,
+				number, iniDate, finDate, latitude, longitude);
+
+		Predicate<PlanningTime> predicateDM = new Predicate<PlanningTime>() {
+
+			@Override
+			public boolean test(PlanningTime pTEach) {
+				// TODO Auto-generated method stub
+
+				// PlanningTime planningT = new PlanningTime(pTEach);
+				if (pTEach.getRate() > 1)
+					for (int i = 1; i < pTEach.getRate(); i++) {
+						int part = pTEach.getPart();
+						int min = part * i;
+						LocalTime beginTime = pTEach.getBeginTime().plusMinutes(min);
+
+						// PlanningTime planningT = null;
+
+						Optional<PlanningTime> planningT = planningTime.stream()
+								.filter(p -> p.getCodOwner().equals(pTEach.getCodOwner())
+										&& p.getCodStore().equals(pTEach.getCodStore())
+										&& p.getCodEmployee().equals(pTEach.getCodEmployee())
+										&& p.getBeginDate().equals(pTEach.getBeginDate())
+										&& p.getBeginTime().equals(beginTime))
+								.findAny();
+
+						if (!planningT.isPresent())
+							return false;
+					}
+				;
+
+				return true;
+			}
+		};
+
+		ArrayList<PlanningTime> planningTimeResult = (ArrayList<PlanningTime>) planningTime.stream().filter(predicateDM)
+				.collect(Collectors.toList());
+
+		return planningTimeResult;
+
+	}
+
 	public JsonObject selectPlanningTimeJson(List<Long> codOwner, List<Integer> codStore, List<Integer> codEmployee,
 			List<String> beginDate, List<String> beginTime, List<Integer> group, List<Integer> weekday,
 			List<Integer> codMaterial, List<String> recordMode, List<String> reservedTo, List<Long> codCustomer,
@@ -188,6 +237,29 @@ public class PlanningTimeModel extends JsonBuilder {
 		return jsonObject;
 	}
 
+	public JsonObject selectPlanningTimeJsonLoc(List<Long> codOwner, List<Integer> codStore, List<Integer> codEmployee,
+			List<String> beginDate, List<String> beginTime, List<Integer> group, List<Integer> weekday,
+			List<Integer> codMaterial, List<String> recordMode, List<String> reservedTo, List<Long> codCustomer,
+			List<Long> number, String iniDate, String finDate, Float latitude, Float longitude) {
+
+		JsonElement jsonElement = new JsonArray().getAsJsonArray();
+		SQLException exception = new SQLException(RETURNED_SUCCESSFULLY, null, 200);
+
+		try {
+
+			jsonElement = new Gson().toJsonTree(selectPlanningTimeLoc(codOwner, codStore, codEmployee, beginDate,
+					beginTime, group, weekday, codMaterial, recordMode, reservedTo, codCustomer, number, iniDate,
+					finDate, latitude, longitude));
+
+		} catch (SQLException e) {
+			exception = e;
+		}
+
+		JsonObject jsonObject = getJsonObjectSelect(jsonElement, exception);
+
+		return jsonObject;
+	}
+
 	public Response selectPlanningTimeResponse(List<Long> codOwner, List<Integer> codStore, List<Integer> codEmployee,
 			List<String> beginDate, List<String> beginTime, List<Integer> group, List<Integer> weekday,
 			List<Integer> codMaterial, List<String> recordMode, List<String> reservedTo, List<Long> codCustomer,
@@ -195,6 +267,15 @@ public class PlanningTimeModel extends JsonBuilder {
 
 		return response(selectPlanningTimeJson(codOwner, codStore, codEmployee, beginDate, beginTime, group, weekday,
 				codMaterial, recordMode, reservedTo, codCustomer, number, iniDate, finDate));
+	}
+
+	public Response selectPlanningTimeResponseLoc(List<Long> codOwner, List<Integer> codStore,
+			List<Integer> codEmployee, List<String> beginDate, List<String> beginTime, List<Integer> group,
+			List<Integer> weekday, List<Integer> codMaterial, List<String> recordMode, List<String> reservedTo,
+			List<Long> codCustomer, List<Long> number, String iniDate, String finDate, Float latitude, Float longitude) {
+
+		return response(selectPlanningTimeJsonLoc(codOwner, codStore, codEmployee, beginDate, beginTime, group, weekday,
+				codMaterial, recordMode, reservedTo, codCustomer, number, iniDate, finDate, latitude, longitude));
 	}
 
 	public ArrayList<PlanningTime> getCart(Long codCustomer) throws SQLException {

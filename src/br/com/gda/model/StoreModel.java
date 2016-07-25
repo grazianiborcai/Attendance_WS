@@ -157,12 +157,108 @@ public class StoreModel extends JsonBuilder {
 								.addAll(materialStoreList.stream()
 										.filter(m -> s.getCodOwner().equals(m.getCodOwner())
 												&& s.getCodStore().equals(m.getCodStore()))
-								.collect(Collectors.toList()));
+										.collect(Collectors.toList()));
 						s.getEmployee()
 								.addAll(storeEmployeeList.stream()
 										.filter(e -> s.getCodOwner().equals(e.getCodOwner())
 												&& s.getCodStore().equals(e.getCodStore()))
-								.collect(Collectors.toList()));
+										.collect(Collectors.toList()));
+					});
+				}
+			}
+		}
+
+		return this.setStoreList(storeList);
+	}
+
+	public ArrayList<Store> selectStoreLoc(List<Long> codOwner, List<Integer> codStore, List<String> cnpj,
+			List<String> inscEstadual, List<String> inscMunicipal, List<String> razaoSocial, List<String> name,
+			List<String> address1, List<String> address2, List<Integer> postalcode, List<String> city,
+			List<String> country, List<String> state, List<String> phone, List<String> codCurr, List<String> recordMode,
+			List<String> language, Boolean withMaterial, Boolean withEmployee, String zoneId, Float latitude,
+			Float longitude) throws SQLException {
+
+		final ArrayList<Store> storeList = new StoreDAO().selectStoreLoc(codOwner, codStore, cnpj, inscEstadual,
+				inscMunicipal, razaoSocial, name, address1, address2, postalcode, city, country, state, phone, codCurr,
+				recordMode, latitude, longitude);
+
+		if (withMaterial || withEmployee) {
+
+			codOwner = storeList.stream().map(s -> s.getCodOwner()).distinct().collect(Collectors.toList());
+
+			for (Long eachCodOwner : codOwner) {
+
+				List<Long> codOwnerList = new ArrayList<Long>();
+				codOwnerList.add(eachCodOwner);
+
+				List<Integer> codStoreList = storeList.stream().filter(s -> s.getCodOwner().equals(eachCodOwner))
+						.map(s -> s.getCodStore()).collect(Collectors.toList());
+
+				MaterialStoreModel materialStoreModel = new MaterialStoreModel();
+				StoreEmployeeModel storeEmployeeModel = new StoreEmployeeModel();
+
+				if (codStoreList != null && !codStoreList.isEmpty()) {
+
+					Thread tStoreMaterial = null;
+					Thread tStoreEmployee = null;
+
+					if (withMaterial) {
+
+						tStoreMaterial = new Thread(new Runnable() {
+							public void run() {
+								try {
+									materialStoreModel.selectMaterialStore(codOwnerList, null, codStoreList, null, null,
+											null, null, recordMode, language, null, null, null);
+								} catch (SQLException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
+						});
+						tStoreMaterial.start();
+					}
+
+					if (withEmployee) {
+
+						tStoreEmployee = new Thread(new Runnable() {
+							public void run() {
+								try {
+									storeEmployeeModel.selectStoreEmployee(codOwnerList, codStoreList, null, null, null,
+											null, null, null, null, null, null, null, null, null, null, null, null,
+											recordMode);
+								} catch (SQLException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
+						});
+						tStoreEmployee.start();
+					}
+
+					try {
+						if (tStoreMaterial != null)
+							tStoreMaterial.join();
+						if (tStoreEmployee != null)
+							tStoreEmployee.join();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					final ArrayList<MaterialStore> materialStoreList = materialStoreModel.getStoreMaterialList();
+					final ArrayList<StoreEmployee> storeEmployeeList = storeEmployeeModel.getStoreEmployeeList();
+
+					storeList.stream().filter(s -> s.getCodOwner().equals(eachCodOwner)).forEach(s -> {
+						s.getMaterial()
+								.addAll(materialStoreList.stream()
+										.filter(m -> s.getCodOwner().equals(m.getCodOwner())
+												&& s.getCodStore().equals(m.getCodStore()))
+										.collect(Collectors.toList()));
+						s.getEmployee()
+								.addAll(storeEmployeeList.stream()
+										.filter(e -> s.getCodOwner().equals(e.getCodOwner())
+												&& s.getCodStore().equals(e.getCodStore()))
+										.collect(Collectors.toList()));
 					});
 				}
 			}
@@ -194,6 +290,31 @@ public class StoreModel extends JsonBuilder {
 
 		return jsonObject;
 	}
+	
+	public JsonObject selectStoreJsonLoc(List<Long> codOwner, List<Integer> codStore, List<String> cnpj,
+			List<String> inscEstadual, List<String> inscMunicipal, List<String> razaoSocial, List<String> name,
+			List<String> address1, List<String> address2, List<Integer> postalcode, List<String> city,
+			List<String> country, List<String> state, List<String> phone, List<String> codCurr, List<String> recordMode,
+			List<String> language, Boolean withMaterial, Boolean withEmployee, String zoneId, Float latitude,
+			Float longitude) {
+
+		JsonElement jsonElement = new JsonArray().getAsJsonArray();
+		SQLException exception = new SQLException(RETURNED_SUCCESSFULLY, null, 200);
+
+		try {
+
+			jsonElement = new Gson().toJsonTree(selectStoreLoc(codOwner, codStore, cnpj, inscEstadual, inscMunicipal,
+					razaoSocial, name, address1, address2, postalcode, city, country, state, phone, codCurr, recordMode,
+					language, withMaterial, withEmployee, zoneId, latitude, longitude));
+
+		} catch (SQLException e) {
+			exception = e;
+		}
+
+		JsonObject jsonObject = getJsonObjectSelect(jsonElement, exception);
+
+		return jsonObject;
+	}
 
 	public Response selectStoreResponse(List<Long> codOwner, List<Integer> codStore, List<String> cnpj,
 			List<String> inscEstadual, List<String> inscMunicipal, List<String> razaoSocial, List<String> name,
@@ -204,6 +325,18 @@ public class StoreModel extends JsonBuilder {
 		return response(selectStoreJson(codOwner, codStore, cnpj, inscEstadual, inscMunicipal, razaoSocial, name,
 				address1, address2, postalcode, city, country, state, phone, codCurr, recordMode, language,
 				withMaterial, withEmployee, zoneId));
+	}
+	
+	public Response selectStoreResponseLoc(List<Long> codOwner, List<Integer> codStore, List<String> cnpj,
+			List<String> inscEstadual, List<String> inscMunicipal, List<String> razaoSocial, List<String> name,
+			List<String> address1, List<String> address2, List<Integer> postalcode, List<String> city,
+			List<String> country, List<String> state, List<String> phone, List<String> codCurr, List<String> recordMode,
+			List<String> language, Boolean withMaterial, Boolean withEmployee, String zoneId, Float latitude,
+			Float longitude) {
+
+		return response(selectStoreJsonLoc(codOwner, codStore, cnpj, inscEstadual, inscMunicipal, razaoSocial, name,
+				address1, address2, postalcode, city, country, state, phone, codCurr, recordMode, language,
+				withMaterial, withEmployee, zoneId, latitude, longitude));
 	}
 
 	public ArrayList<Store> jsonToStoreList(String incomingData) {

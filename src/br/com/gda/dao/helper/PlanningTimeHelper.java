@@ -76,6 +76,23 @@ public class PlanningTimeHelper extends GdaDB {
 			+ FIELD17 + ", count(" + FIELD06 + ") as " + EmployeeMaterialHelper.FIELD05 + " FROM " + SCHEMA + "."
 			+ TABLE;
 
+	public static final String ST_SELECT_WITH_LOCATION = "SELECT * FROM " + SCHEMA + "." + TABLE + " INNER JOIN "
+			+ SCHEMA + "." + EmployeeMaterialHelper.TABLE + " ON " + TABLE + "." + FIELD01 + " = "
+			+ EmployeeMaterialHelper.TABLE + "." + EmployeeMaterialHelper.FIELD01 + " AND " + TABLE + "." + FIELD02
+			+ " = " + EmployeeMaterialHelper.TABLE + "." + EmployeeMaterialHelper.FIELD02 + " AND " + TABLE + "."
+			+ FIELD03 + " = " + EmployeeMaterialHelper.TABLE + "." + EmployeeMaterialHelper.FIELD03
+
+			+ " INNER JOIN " + SCHEMA + "." + MaterialStoreHelper.TABLE + " ON " + TABLE + "." + FIELD01 + " = "
+			+ MaterialStoreHelper.TABLE + "." + MaterialStoreHelper.FIELD01 + " AND " + TABLE + "." + FIELD02 + " = "
+			+ MaterialStoreHelper.TABLE + "." + MaterialStoreHelper.FIELD03 + " AND " + TABLE + "." + FIELD07 + " = "
+			+ MaterialStoreHelper.TABLE + "." + MaterialStoreHelper.FIELD08 + " AND " + EmployeeMaterialHelper.TABLE
+			+ "." + EmployeeMaterialHelper.FIELD04 + " = " + MaterialStoreHelper.TABLE + "."
+			+ MaterialStoreHelper.FIELD02 + " WHERE " + TABLE + "." + FIELD02
+			+ " IN ( SELECT Y.Cod_store FROM (SELECT Store.Cod_store, ( 6371 * acos( cos( radians(" + "?"
+			+ ") ) * cos( radians( Store.Latitude ) ) * cos( radians( Store.Longitude ) - radians(" + "?"
+			+ ") ) + sin( radians(" + "?" + ") ) * sin( radians( Store.Latitude ) ) ) ) AS distance FROM " + SCHEMA
+			+ "." + "Store HAVING distance < 56 ORDER BY distance LIMIT 0 , 20) Y)";
+
 	public PlanningTime assignResult(ResultSet resultSet, String from) throws SQLException {
 
 		PlanningTime planningTime = null;
@@ -83,6 +100,7 @@ public class PlanningTimeHelper extends GdaDB {
 		// LocalTime beginTime = resultSet.getTime(TABLE + "." +
 		// FIELD05).toLocalTime();
 		// int part = resultSet.getInt(TABLE + "." + FIELD15);
+//		int rate = resultSet.getInt(EmployeeMaterialHelper.TABLE + "." + EmployeeMaterialHelper.FIELD05);
 		int rate = resultSet.getInt(EmployeeMaterialHelper.FIELD05);
 		// int min = part * rate;
 
@@ -199,6 +217,26 @@ public class PlanningTimeHelper extends GdaDB {
 
 		stmt = stmt + " GROUP BY " + TABLE + "." + FIELD01 + ", " + TABLE + "." + FIELD02 + ", " + TABLE + "." + FIELD03
 				+ ", " + TABLE + "." + FIELD04 + ", " + TABLE + "." + FIELD06;
+
+		return stmt;
+	}
+
+	public String prepareSelectLoc(List<Long> codOwner, List<Integer> codStore, List<Integer> codEmployee,
+			List<String> beginDate, List<String> beginTime, List<Integer> group, List<Integer> weekday,
+			List<Integer> codMaterial, List<String> recordMode, List<String> reservedTo, List<Long> codCustomer,
+			List<Long> number, String dateTime, String iniDate, String finDate) {
+
+		String stmt = ST_SELECT_WITH_LOCATION;
+
+		List<String> where = preparePlanningTimeWhere(codOwner, codStore, codEmployee, beginDate, beginTime, group,
+				weekday, codMaterial, recordMode, reservedTo, codCustomer, number);
+
+		for (int i = 0; i < where.size(); i++) {
+			stmt = stmt + " AND " + where.get(i);
+		}
+
+//		stmt = stmt + " GROUP BY " + TABLE + "." + FIELD01 + ", " + TABLE + "." + FIELD02 + ", " + TABLE + "." + FIELD03
+//				+ ", " + TABLE + "." + FIELD04 + ", " + TABLE + "." + FIELD06;
 
 		return stmt;
 	}

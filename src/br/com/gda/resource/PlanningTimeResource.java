@@ -28,6 +28,7 @@ public class PlanningTimeResource extends JsonBuilder {
 	private static final String RELEASE_PLANNINGTIME = "/releasePlanningTime";
 	private static final String DELETE_PLANNINGTIME = "/deletePlanningTime";
 	private static final String SELECT_PLANNINGTIME = "/selectPlanningTime";
+	private static final String SELECT_PLANNINGTIME_LOC = "/selectPlanningTimeLoc";
 	private static final String GET_CART = "/getCart";
 	private static final String GET_BOOKED = "/getBooked";
 	private static final String PAY_CART = "/payCart";
@@ -134,15 +135,40 @@ public class PlanningTimeResource extends JsonBuilder {
 			@QueryParam("codStore") List<Integer> codStore) {
 
 		JsonObject jsonObject = new JsonObject();
-		if ( codOwner != null && codOwner.size() != 0 && codStore != null && codStore.size() != 0) {
+		if (codOwner != null && codOwner.size() != 0 && codStore != null && codStore.size() != 0) {
 			jsonObject.addProperty("value", 2.00);
 			jsonObject.addProperty("currency", "BRL");
 		} else {
-			SQLException exception = new SQLException("Please use the mandatory query parameters: codOwner and codStore", null, 88);
+			SQLException exception = new SQLException(
+					"Please use the mandatory query parameters: codOwner and codStore", null, 88);
 			jsonObject = getJsonObjectUpdate(exception);
 		}
-		
+
 		return response(jsonObject);
+	}
+	
+	
+	@GET
+	@Path(SELECT_PLANNINGTIME_LOC)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response loc(@QueryParam("codOwner") List<Long> codOwner,
+			@QueryParam("codStore") List<Integer> codStore, @QueryParam("codEmployee") List<Integer> codEmployee,
+			@QueryParam("beginDate") List<String> beginDate, @QueryParam("beginTime") List<String> beginTime,
+			@QueryParam("group") List<Integer> group, @QueryParam("weekday") List<Integer> weekday,
+			@QueryParam("codMaterial") List<Integer> codMaterial, @QueryParam("recordMode") List<String> recordMode,
+			@QueryParam("reservedTo") List<String> reservedTo, @QueryParam("codCustomer") List<Long> codCustomer,
+			@QueryParam("number") List<Long> number, @QueryParam("iniDate") String iniDate,
+			@QueryParam("finDate") String finDate, @QueryParam("latitude") String latitude,
+			@QueryParam("longitude") String longitude) {
+		
+		Float latitudeF = Float.parseFloat(latitude);
+		Float longitudeF = Float.parseFloat(longitude);
+
+		Response response = new PlanningTimeModel().selectPlanningTimeResponseLoc(codOwner, codStore, codEmployee,
+				beginDate, beginTime, group, weekday, codMaterial, recordMode, reservedTo, codCustomer, number, iniDate,
+				finDate, latitudeF, longitudeF);
+
+		return response;
 	}
 
 }
