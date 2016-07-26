@@ -26,7 +26,7 @@ import br.com.gda.helper.Reserve;
 
 public class PlanningTimeDAO extends ConnectionBD {
 
-	private static final int _10 = 10;
+	private static final int _10 = 3;
 
 	public SQLException insertPlanningTime(ArrayList<PlanningTime> planningTimeList) {
 
@@ -180,10 +180,10 @@ public class PlanningTimeDAO extends ConnectionBD {
 
 				if (planningTimeListAux1.size() != 0 && !error24) {
 					planningTimeList.addAll(planningTimeListAux1);
-					exception = new SQLException("Message erro", null, 23);
+					exception = new SQLException("Item selecionado não se encontra mais disponível.", null, 23);
 				} else {
 					planningTimeList.addAll(planningTimeListAux2);
-					exception = new SQLException("Message erro", null, 24);
+					exception = new SQLException("Sua pré-reserva expirou. Alguns itens não estão mais disponíveis.", null, 24);
 				}
 
 				updateStmtT02 = releasePlanningTime(planningTimeList, codCustomer, conn, RecordMode.ISRESERVED);

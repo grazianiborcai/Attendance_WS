@@ -135,14 +135,14 @@ public class PlanningTimeResource extends JsonBuilder {
 			@QueryParam("codStore") List<Integer> codStore) {
 
 		JsonObject jsonObject = new JsonObject();
-		if (codOwner != null && codOwner.size() != 0 && codStore != null && codStore.size() != 0) {
+//		if (codOwner != null && codOwner.size() != 0 && codStore != null && codStore.size() != 0) {
 			jsonObject.addProperty("value", 2.00);
 			jsonObject.addProperty("currency", "BRL");
-		} else {
-			SQLException exception = new SQLException(
-					"Please use the mandatory query parameters: codOwner and codStore", null, 88);
-			jsonObject = getJsonObjectUpdate(exception);
-		}
+//		} else {
+//			SQLException exception = new SQLException(
+//					"Please use the mandatory query parameters: codOwner and codStore", null, 88);
+//			jsonObject = getJsonObjectUpdate(exception);
+//		}
 
 		return response(jsonObject);
 	}
