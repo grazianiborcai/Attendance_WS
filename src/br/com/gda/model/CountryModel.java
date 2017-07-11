@@ -3,7 +3,6 @@ package br.com.gda.model;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Response;
 
@@ -12,39 +11,19 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import br.com.gda.dao.CountryDAO;
-import br.com.gda.helper.Country_old;
-import br.com.gda.helper.State;
+import br.com.gda.dao.CountryTextDAO;
+import br.com.gda.helper.Country;
 
-public class CountryModel extends JsonBuilder {
+public class CountryTextModel extends JsonBuilder {
 
-	public ArrayList<Country_old> selectCountry(List<String> country,
+	public ArrayList<Country> selectCountryText(List<String> country,
 			List<String> language, List<String> name) throws SQLException {
 
-		final ArrayList<Country_old> countryList = new CountryDAO()
-				.selectCountry(country, language, name);
-
-		country = countryList.stream().map(c -> c.getCountry())
-				.collect(Collectors.toList());
-
-		if (country != null && !country.isEmpty()) {
-
-			final ArrayList<State> stateList = new StateModel()
-					.selectState(country, null, language, null);
-
-			countryList.stream().forEach(
-					c -> c.getState().addAll(
-							stateList
-									.stream()
-									.filter(s -> c.getCountry().equals(
-											s.getCountry()))
-									.collect(Collectors.toList())));
-		}
-
-		return countryList;
+		return new CountryTextDAO().selectCountryText(country, language,
+				name);
 	}
 
-	public JsonObject selectCountryJson(List<String> country,
+	public JsonObject selectCountryTextJson(List<String> country,
 			List<String> language, List<String> name) {
 
 		JsonElement jsonElement = new JsonArray().getAsJsonArray();
@@ -53,7 +32,7 @@ public class CountryModel extends JsonBuilder {
 
 		try {
 
-			jsonElement = new Gson().toJsonTree(selectCountry(country,
+			jsonElement = new Gson().toJsonTree(selectCountryText(country,
 					language, name));
 
 		} catch (SQLException e) {
@@ -65,10 +44,10 @@ public class CountryModel extends JsonBuilder {
 		return jsonObject;
 	}
 
-	public Response selectCountryResponse(List<String> country,
+	public Response selectCountryTextResponse(List<String> country,
 			List<String> language, List<String> name) {
 
-		return response(selectCountryJson(country, language, name));
+		return response(selectCountryTextJson(country, language, name));
 	}
 
 }
