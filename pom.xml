@@ -1,12 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>Agenda_WS</groupId>
-	<artifactId>Agenda_WS</artifactId>
+	<groupId>Attendance_WS</groupId>
+	<artifactId>Attendance_WS</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>Agenda_WS</name>
-	<description>Agenda_WS</description>
+	<name>Attendance_WS</name>
+	<description>Attendance_WS</description>
+	
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
@@ -86,7 +87,7 @@
 			<artifactId>moneta</artifactId> <version>1.0</version> </dependency> -->
 		<dependency>
 			<groupId>br.com.mind5.helper</groupId>
-			<artifactId>agenda-metadata_lib</artifactId>
+			<artifactId>attendance-metadata_lib</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>

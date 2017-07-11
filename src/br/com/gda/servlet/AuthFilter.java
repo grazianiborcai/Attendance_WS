@@ -46,7 +46,7 @@ public class AuthFilter implements ContainerRequestFilter {
 	 */
 	@Override
 	public ContainerRequest filter(ContainerRequest containerRequest) throws WebApplicationException {
-		// GET, POST, PUT, DELETE, ...
+/*		// GET, POST, PUT, DELETE, ...
 		String method = containerRequest.getMethod();
 		// Token/GetToken for example
 		String path = containerRequest.getPath(true);
@@ -197,7 +197,7 @@ public class AuthFilter implements ContainerRequestFilter {
 				}
 			}
 		}
-
+*/
 		return containerRequest;
 	}
 }

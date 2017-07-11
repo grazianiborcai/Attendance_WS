@@ -35,7 +35,7 @@ public class ServletContainerGDA extends ServletContainer {
 
 //	public static final ExchangeRateProvider exchangeRateProvider = MonetaryConversions.getExchangeRateProvider("IDENT",
 //			"ECB", "ECB-HIST", "ECB-HIST90");
-	public static Publisher publisher;
+//	public static Publisher publisher;
 	
 	public static ServletContext context;
 
@@ -128,7 +128,7 @@ public class ServletContainerGDA extends ServletContainer {
 	@Override
 	public void destroy() {
 		super.destroy();
-		publisher.disconnect();
+//		publisher.disconnect();
 	}
 
 }

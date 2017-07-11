@@ -50,7 +50,7 @@ public class GdaDB {
 	protected static final String ADDRESS2 = "Address2";
 	protected static final String POSTALCODE = "Postalcode";
 	protected static final String CITY = "City";
-	protected static final String COUNTRY = "Country";
+	protected static final String COUNTRY = "CountryID";
 	protected static final String STATE_PROVINCE = "State_province";
 	protected static final String CPF = "CPF";
 	protected static final String PASSWORD = "Password";
@@ -96,7 +96,7 @@ public class GdaDB {
 	protected static final String BEGIN_DATE = "Begin_date";
 	protected static final String COD_CURR = "Cod_curr";
 
-	protected static final String SCHEMA = "agenda";
+	protected static final String SCHEMA = "attendance";
 
 	// protected static final String TABLE049 = "material_customer_view";
 	//

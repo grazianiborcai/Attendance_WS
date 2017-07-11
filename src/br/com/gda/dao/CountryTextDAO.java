@@ -9,14 +9,14 @@ import java.util.List;
 
 import br.com.gda.dao.helper.CountryTextHelper;
 import br.com.gda.db.ConnectionBD;
-import br.com.gda.helper.CountryText;
+import br.com.gda.helper.Country;
 
 public class CountryTextDAO extends ConnectionBD {
 
-	public ArrayList<CountryText> selectCountryText(List<String> country,
+	public ArrayList<Country> selectCountryText(List<String> country,
 			List<String> language, List<String> name) throws SQLException {
 
-		ArrayList<CountryText> countryTextList = new ArrayList<CountryText>();
+		ArrayList<Country> countryTextList = new ArrayList<Country>();
 		Connection conn = null;
 		PreparedStatement selectStmt = null;
 		ResultSet resultSet = null;

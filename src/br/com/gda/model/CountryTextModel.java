@@ -12,11 +12,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import br.com.gda.dao.CountryTextDAO;
-import br.com.gda.helper.CountryText;
+import br.com.gda.helper.Country;
 
 public class CountryTextModel extends JsonBuilder {
 
-	public ArrayList<CountryText> selectCountryText(List<String> country,
+	public ArrayList<Country> selectCountryText(List<String> country,
 			List<String> language, List<String> name) throws SQLException {
 
 		return new CountryTextDAO().selectCountryText(country, language,

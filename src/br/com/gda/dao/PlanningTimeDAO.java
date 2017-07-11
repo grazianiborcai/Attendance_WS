@@ -11,6 +11,7 @@ import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -26,7 +27,8 @@ import br.com.gda.helper.Reserve;
 
 public class PlanningTimeDAO extends ConnectionBD {
 
-	private static final int _10 = 3;
+	private static final String AMERICA_SAO_PAULO = "America/Sao_Paulo";
+	private static final int _10 = 10;
 
 	public SQLException insertPlanningTime(ArrayList<PlanningTime> planningTimeList) {
 
@@ -366,7 +368,7 @@ public class PlanningTimeDAO extends ConnectionBD {
 
 			PlanningTimeHelper planningTimeHelper = new PlanningTimeHelper();
 
-			LocalDateTime dateTime = ZonedDateTime.now(ZoneOffset.UTC).toLocalDateTime();
+			LocalDateTime dateTime = ZonedDateTime.now(ZoneOffset.UTC).withZoneSameInstant(ZoneId.of(AMERICA_SAO_PAULO)).toLocalDateTime();
 
 			selectStmt = conn.prepareStatement(planningTimeHelper.prepareSelectLoc(codOwner, codStore, codEmployee,
 					beginDate, beginTime, group, weekday, codMaterial, recordMode, reservedTo, codCustomer, number,
@@ -380,8 +382,8 @@ public class PlanningTimeDAO extends ConnectionBD {
 
 			while (resultSet.next()) {
 
-				PlanningTime planningTime = planningTimeHelper.assignResult(resultSet,
-						PlanningTimeHelper.SELECT_PLANNING_TIME);
+				PlanningTime planningTime = planningTimeHelper.assignResultLoc(resultSet,
+						PlanningTimeHelper.SELECT_PLANNING_TIME, dateTime.toLocalDate(), dateTime.toLocalTime());
 
 				if (planningTime != null)
 					planningTimeList.add(planningTime);

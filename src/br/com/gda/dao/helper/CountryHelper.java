@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.gda.db.GdaDB;
-import br.com.gda.helper.Country;
+import br.com.gda.helper.Country_old;
 
 public class CountryHelper extends GdaDB {
 
@@ -29,14 +29,14 @@ public class CountryHelper extends GdaDB {
 		this.countryTextHelper = countryTextHelper;
 	}
 
-	public void assignResult(ArrayList<Country> statelList, ResultSet resultSet)
+	public void assignResult(ArrayList<Country_old> statelList, ResultSet resultSet)
 			throws SQLException {
 
 		if (resultSet.isFirst()
 				|| !statelList.get(statelList.size() - 1).getCountry()
 						.equals(resultSet.getString(TABLE + "." + FIELD01))) {
 
-			Country eachCountry = new Country();
+			Country_old eachCountry = new Country_old();
 
 			eachCountry.setCountry(resultSet.getString(TABLE + "." + FIELD01));
 

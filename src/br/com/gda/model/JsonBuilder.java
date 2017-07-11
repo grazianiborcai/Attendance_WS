@@ -201,7 +201,7 @@ public class JsonBuilder {
 					JsonObject jsonObject = getJsonObjectSelect(
 							new Gson().toJsonTree(objectList.stream().filter(filter).collect(Collectors.toList())),
 							exception, process);
-					ServletContainerGDA.publisher.publishMessage(jsonObject.toString(), fullTopic.toString());
+//					ServletContainerGDA.publisher.publishMessage(jsonObject.toString(), fullTopic.toString());
 				}
 			}
 		});

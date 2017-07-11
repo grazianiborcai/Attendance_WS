@@ -13,15 +13,15 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import br.com.gda.dao.CountryDAO;
-import br.com.gda.helper.Country;
+import br.com.gda.helper.Country_old;
 import br.com.gda.helper.State;
 
 public class CountryModel extends JsonBuilder {
 
-	public ArrayList<Country> selectCountry(List<String> country,
+	public ArrayList<Country_old> selectCountry(List<String> country,
 			List<String> language, List<String> name) throws SQLException {
 
-		final ArrayList<Country> countryList = new CountryDAO()
+		final ArrayList<Country_old> countryList = new CountryDAO()
 				.selectCountry(country, language, name);
 
 		country = countryList.stream().map(c -> c.getCountry())

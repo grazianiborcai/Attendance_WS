@@ -2,6 +2,8 @@ package br.com.gda.dao.helper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +14,7 @@ import br.com.gda.helper.RecordMode;
 
 public class PlanningTimeHelper extends GdaDB {
 
+	private static final String DISTANCE = "56";
 	public static final String SELECT_PLANNING_TIME = "selectPlanningTime";
 	public static final String GET_BOOKED = "getBooked";
 	public static final String GET_CART = "getCart";
@@ -91,7 +94,21 @@ public class PlanningTimeHelper extends GdaDB {
 			+ " IN ( SELECT Y.Cod_store FROM (SELECT Store.Cod_store, ( 6371 * acos( cos( radians(" + "?"
 			+ ") ) * cos( radians( Store.Latitude ) ) * cos( radians( Store.Longitude ) - radians(" + "?"
 			+ ") ) + sin( radians(" + "?" + ") ) * sin( radians( Store.Latitude ) ) ) ) AS distance FROM " + SCHEMA
-			+ "." + "Store HAVING distance < 56 ORDER BY distance LIMIT 0 , 20) Y)";
+			+ "." + "Store HAVING distance < " + DISTANCE + " ORDER BY distance LIMIT 0 , 20) Y)";
+
+	public PlanningTime assignResultLoc(ResultSet resultSet, String from, LocalDate date, LocalTime time)
+			throws SQLException {
+
+		PlanningTime planningTime = null;
+
+		LocalDate dateTimeSQL = resultSet.getDate(TABLE + "." + FIELD04).toLocalDate();
+		LocalTime timeSQL = resultSet.getTime(TABLE + "." + FIELD05).toLocalTime();
+
+		if ((dateTimeSQL.equals(date) && timeSQL.isAfter(time.plusHours(1))) || dateTimeSQL.isAfter(date))
+			planningTime = assignResult(resultSet, from);
+
+		return planningTime;
+	}
 
 	public PlanningTime assignResult(ResultSet resultSet, String from) throws SQLException {
 
@@ -100,7 +117,8 @@ public class PlanningTimeHelper extends GdaDB {
 		// LocalTime beginTime = resultSet.getTime(TABLE + "." +
 		// FIELD05).toLocalTime();
 		// int part = resultSet.getInt(TABLE + "." + FIELD15);
-//		int rate = resultSet.getInt(EmployeeMaterialHelper.TABLE + "." + EmployeeMaterialHelper.FIELD05);
+		// int rate = resultSet.getInt(EmployeeMaterialHelper.TABLE + "." +
+		// EmployeeMaterialHelper.FIELD05);
 		int rate = resultSet.getInt(EmployeeMaterialHelper.FIELD05);
 		// int min = part * rate;
 
@@ -235,8 +253,12 @@ public class PlanningTimeHelper extends GdaDB {
 			stmt = stmt + " AND " + where.get(i);
 		}
 
-//		stmt = stmt + " GROUP BY " + TABLE + "." + FIELD01 + ", " + TABLE + "." + FIELD02 + ", " + TABLE + "." + FIELD03
-//				+ ", " + TABLE + "." + FIELD04 + ", " + TABLE + "." + FIELD06;
+		stmt = stmt + " AND " + TABLE + "." + FIELD12 + " < '" + dateTime + "' AND ( " + TABLE + "." + FIELD09 + " = '"
+				+ RecordMode.RECORD_OK + "' OR " + TABLE + "." + FIELD09 + " = '" + RecordMode.ISRESERVED + "' )";
+
+		// stmt = stmt + " GROUP BY " + TABLE + "." + FIELD01 + ", " + TABLE +
+		// "." + FIELD02 + ", " + TABLE + "." + FIELD03
+		// + ", " + TABLE + "." + FIELD04 + ", " + TABLE + "." + FIELD06;
 
 		return stmt;
 	}
