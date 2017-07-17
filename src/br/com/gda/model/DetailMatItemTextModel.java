@@ -14,7 +14,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import br.com.gda.dao.DetailMatItemTextDAO;
-import br.com.gda.helper.DetailMatItemText;
+import br.com.mind5.helper.DetailMatItemText;
 
 public class DetailMatItemTextModel extends JsonBuilder {
 

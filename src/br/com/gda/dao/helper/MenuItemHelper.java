@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.gda.db.GdaDB;
-import br.com.gda.helper.MenuItem;
-import br.com.gda.helper.MenuItemText;
-import br.com.gda.helper.RecordMode;
+import br.com.mind5.helper.MenuItem;
+import br.com.mind5.helper.MenuItemText;
+import br.com.mind5.helper.RecordMode;
 
 public class MenuItemHelper extends GdaDB {
 

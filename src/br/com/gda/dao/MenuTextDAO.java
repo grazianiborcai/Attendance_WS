@@ -9,8 +9,8 @@ import java.util.List;
 
 import br.com.gda.dao.helper.MenuTextHelper;
 import br.com.gda.db.ConnectionBD;
-import br.com.gda.helper.MenuText;
-import br.com.gda.helper.RecordMode;
+import br.com.mind5.helper.MenuText;
+import br.com.mind5.helper.RecordMode;
 
 public class MenuTextDAO extends ConnectionBD {
 

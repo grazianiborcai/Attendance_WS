@@ -2,7 +2,6 @@ package br.com.gda.model;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.ws.rs.core.Response;
 
@@ -11,20 +10,17 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import br.com.gda.dao.CountryTextDAO;
-import br.com.gda.helper.Country;
+import br.com.gda.dao.CountryDAO;
+import br.com.mind5.helper.Country;
 
-public class CountryTextModel extends JsonBuilder {
+public class CountryModel extends JsonBuilder {
 
-	public ArrayList<Country> selectCountryText(List<String> country,
-			List<String> language, List<String> name) throws SQLException {
+	public ArrayList<Country> selectCountry() throws SQLException {
 
-		return new CountryTextDAO().selectCountryText(country, language,
-				name);
+		return new CountryDAO().selectCountryText();
 	}
 
-	public JsonObject selectCountryTextJson(List<String> country,
-			List<String> language, List<String> name) {
+	public JsonObject selectCountryJson() {
 
 		JsonElement jsonElement = new JsonArray().getAsJsonArray();
 		SQLException exception = new SQLException(RETURNED_SUCCESSFULLY, null,
@@ -32,8 +28,7 @@ public class CountryTextModel extends JsonBuilder {
 
 		try {
 
-			jsonElement = new Gson().toJsonTree(selectCountryText(country,
-					language, name));
+			jsonElement = new Gson().toJsonTree(selectCountry());
 
 		} catch (SQLException e) {
 			exception = e;
@@ -44,10 +39,9 @@ public class CountryTextModel extends JsonBuilder {
 		return jsonObject;
 	}
 
-	public Response selectCountryTextResponse(List<String> country,
-			List<String> language, List<String> name) {
+	public Response selectCountryResponse() {
 
-		return response(selectCountryTextJson(country, language, name));
+		return response(selectCountryJson());
 	}
 
 }

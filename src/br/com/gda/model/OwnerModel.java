@@ -16,13 +16,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import br.com.gda.dao.OwnerDAO;
-import br.com.gda.helper.DetailMat;
-import br.com.gda.helper.Employee;
-import br.com.gda.helper.Material;
-import br.com.gda.helper.Menu;
-import br.com.gda.helper.Owner;
-import br.com.gda.helper.RecordMode;
-import br.com.gda.helper.Store;
+import br.com.mind5.helper.DetailMat;
+import br.com.mind5.helper.Employee;
+import br.com.mind5.helper.Material;
+import br.com.mind5.helper.Menu;
+import br.com.mind5.helper.Owner;
+import br.com.mind5.helper.RecordMode;
+import br.com.mind5.helper.Store;
 
 public class OwnerModel extends JsonBuilder {
 

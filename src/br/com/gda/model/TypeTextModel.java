@@ -12,7 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import br.com.gda.dao.TypeTextDAO;
-import br.com.gda.helper.TypeText;
+import br.com.mind5.helper.TypeText;
 
 public class TypeTextModel extends JsonBuilder {
 

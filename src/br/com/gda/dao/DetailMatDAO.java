@@ -14,11 +14,11 @@ import br.com.gda.dao.helper.DetailMatItemTextHelper;
 import br.com.gda.dao.helper.DetailMatTextHelper;
 import br.com.gda.dao.helper.MaterialDetailHelper;
 import br.com.gda.db.ConnectionBD;
-import br.com.gda.helper.DetailMat;
-import br.com.gda.helper.DetailMatItem;
-import br.com.gda.helper.DetailMatItemText;
-import br.com.gda.helper.DetailMatText;
-import br.com.gda.helper.RecordMode;
+import br.com.mind5.helper.DetailMat;
+import br.com.mind5.helper.DetailMatItem;
+import br.com.mind5.helper.DetailMatItemText;
+import br.com.mind5.helper.DetailMatText;
+import br.com.mind5.helper.RecordMode;
 
 public class DetailMatDAO extends ConnectionBD {
 

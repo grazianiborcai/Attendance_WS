@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.gda.db.GdaDB;
-import br.com.gda.helper.Customer;
+import br.com.mind5.helper.Customer;
 
 public class CustomerHelper extends GdaDB {
 

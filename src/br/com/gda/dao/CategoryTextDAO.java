@@ -9,7 +9,7 @@ import java.util.List;
 
 import br.com.gda.dao.helper.CategoryTextHelper;
 import br.com.gda.db.ConnectionBD;
-import br.com.gda.helper.CategoryText;
+import br.com.mind5.helper.CategoryText;
 
 public class CategoryTextDAO extends ConnectionBD {
 

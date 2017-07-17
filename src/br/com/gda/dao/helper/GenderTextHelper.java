@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.gda.db.GdaDB;
-import br.com.gda.helper.GenderText;
+import br.com.mind5.helper.Gender;
 
 public class GenderTextHelper extends GdaDB {
 
@@ -19,9 +19,9 @@ public class GenderTextHelper extends GdaDB {
 	public static final String ST_SELECT = "SELECT * FROM " + SCHEMA + "."
 			+ TABLE;
 
-	public GenderText assignResult(ResultSet resultSet) throws SQLException {
+	public Gender assignResult(ResultSet resultSet) throws SQLException {
 
-		GenderText genderText = new GenderText();
+		Gender genderText = new Gender();
 
 		genderText.setCodGender(resultSet.getInt(FIELD01));
 		genderText.setLanguage(resultSet.getString(FIELD02));

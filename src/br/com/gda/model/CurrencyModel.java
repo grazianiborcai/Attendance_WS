@@ -10,7 +10,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import br.com.gda.dao.CurrencyDAO;
-import br.com.gda.helper.CurrencyBase;
+import br.com.mind5.helper.CurrencyBase;
 
 public class CurrencyModel extends JsonBuilder {
 

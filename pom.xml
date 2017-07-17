@@ -88,7 +88,7 @@
 		<dependency>
 			<groupId>br.com.mind5.helper</groupId>
 			<artifactId>attendance-metadata_lib</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>0.0.1-ATTMETALIB</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

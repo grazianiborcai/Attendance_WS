@@ -12,9 +12,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import br.com.gda.dao.MenuDAO;
-import br.com.gda.helper.Menu;
-import br.com.gda.helper.MenuItem;
-import br.com.gda.helper.RecordMode;
+import br.com.mind5.helper.Menu;
+import br.com.mind5.helper.MenuItem;
+import br.com.mind5.helper.RecordMode;
 
 public class MenuModel extends JsonBuilder {
 

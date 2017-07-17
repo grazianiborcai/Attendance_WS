@@ -10,8 +10,8 @@ import java.util.List;
 import br.com.gda.dao.helper.MaterialStoreHelper;
 import br.com.gda.db.ConnectionBD;
 import br.com.gda.db.GdaDB;
-import br.com.gda.helper.MaterialStore;
-import br.com.gda.helper.RecordMode;
+import br.com.mind5.helper.MaterialStore;
+import br.com.mind5.helper.RecordMode;
 
 public class MaterialStoreDAO extends ConnectionBD {
 

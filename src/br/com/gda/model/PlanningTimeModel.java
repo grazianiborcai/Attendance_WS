@@ -26,11 +26,11 @@ import com.google.gson.JsonObject;
 import br.com.gda.dao.CustomerDAO;
 import br.com.gda.dao.PlanningTimeDAO;
 import br.com.gda.dao.StoreDAO;
-import br.com.gda.helper.PayCart;
-import br.com.gda.helper.PlanningTime;
-import br.com.gda.helper.RecordMode;
-import br.com.gda.helper.Reserve;
-import br.com.gda.helper.Store;
+import br.com.mind5.helper.PayCart;
+import br.com.mind5.helper.PlanningTime;
+import br.com.mind5.helper.RecordMode;
+import br.com.mind5.helper.Reserve;
+import br.com.mind5.helper.Store;
 import moip.sdk.api.Amount;
 import moip.sdk.api.CreditCard;
 import moip.sdk.api.Customer;
@@ -396,8 +396,8 @@ public class PlanningTimeModel extends JsonBuilder {
 			if (codPayment == null || codPayment.isEmpty()) {
 				List<Long> codCustomer = new ArrayList<Long>();
 				codCustomer.add(customer);
-				ArrayList<br.com.gda.helper.Customer> customerList = null;
-				ArrayList<br.com.gda.helper.Customer> customerUpdatedList = null;
+				ArrayList<br.com.mind5.helper.Customer> customerList = null;
+				ArrayList<br.com.mind5.helper.Customer> customerUpdatedList = null;
 				try {
 					CustomerModel customerModel = new CustomerModel();
 					customerList = customerModel.selectCustomer(codCustomer, null, null, null, null, null, null, null,

@@ -12,11 +12,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import br.com.gda.dao.GenderTextDAO;
-import br.com.gda.helper.GenderText;
+import br.com.mind5.helper.Gender;
 
 public class GenderTextModel extends JsonBuilder {
 
-	public ArrayList<GenderText> selectGenderText(List<Integer> codGender,
+	public ArrayList<Gender> selectGenderText(List<Integer> codGender,
 			List<String> language, List<String> name) throws SQLException {
 
 		return new GenderTextDAO().selectGenderText(codGender, language,

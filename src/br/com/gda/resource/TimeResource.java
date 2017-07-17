@@ -14,7 +14,7 @@ import javax.ws.rs.core.Response;
 
 import com.google.gson.JsonObject;
 
-import br.com.gda.helper.Weekday;
+import br.com.mind5.helper.Weekday;
 
 @Path("/Time")
 public class TimeResource {

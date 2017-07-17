@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import br.com.gda.db.GdaDB;
-import br.com.gda.helper.Reserve;
+import br.com.mind5.helper.Reserve;
 
 public class ReserveHelper extends GdaDB {
 

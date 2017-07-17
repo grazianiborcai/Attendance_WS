@@ -5,36 +5,36 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
-import br.com.gda.dao.helper.CountryTextHelper;
+import br.com.gda.dao.helper.CountryHelper;
 import br.com.gda.db.ConnectionBD;
-import br.com.gda.helper.Country;
+import br.com.mind5.helper.Country;
 
-public class CountryTextDAO extends ConnectionBD {
+public class CountryDAO extends ConnectionBD {
 
-	public ArrayList<Country> selectCountryText(List<String> country,
-			List<String> language, List<String> name) throws SQLException {
+	public ArrayList<Country> selectCountryText() throws SQLException {
 
 		ArrayList<Country> countryTextList = new ArrayList<Country>();
 		Connection conn = null;
 		PreparedStatement selectStmt = null;
 		ResultSet resultSet = null;
+		ArrayList<PreparedStatement> stmt = new ArrayList<PreparedStatement>();
 
 		try {
 
 			conn = getConnection();
 
-			CountryTextHelper countryTextHelper = new CountryTextHelper();
+			CountryHelper countryHelper = new CountryHelper();
 
-			selectStmt = conn.prepareStatement(countryTextHelper.prepareSelect(
-					country, language, name));
+			selectStmt = conn.prepareStatement(countryHelper.prepareSelect());
 
 			resultSet = selectStmt.executeQuery();
+			
+			stmt.add(selectStmt);
 
 			while (resultSet.next()) {
 
-				countryTextList.add(countryTextHelper.assignResult(resultSet));
+				countryTextList.add(countryHelper.assignResult(resultSet));
 			}
 
 			return countryTextList;
@@ -42,7 +42,7 @@ public class CountryTextDAO extends ConnectionBD {
 		} catch (SQLException e) {
 			throw e;
 		} finally {
-			closeConnection(conn, selectStmt, resultSet);
+			closeConnection(conn, stmt, resultSet);
 		}
 	}
 

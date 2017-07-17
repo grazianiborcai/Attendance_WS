@@ -13,10 +13,10 @@ import br.com.gda.dao.helper.MaterialHelper;
 import br.com.gda.dao.helper.MaterialTextHelper;
 import br.com.gda.dao.helper.MenuItemHelper;
 import br.com.gda.db.ConnectionBD;
-import br.com.gda.helper.MaterialDetail;
-import br.com.gda.helper.Material;
-import br.com.gda.helper.MaterialText;
-import br.com.gda.helper.RecordMode;
+import br.com.mind5.helper.Material;
+import br.com.mind5.helper.MaterialDetail;
+import br.com.mind5.helper.MaterialText;
+import br.com.mind5.helper.RecordMode;
 
 public class MaterialDAO extends ConnectionBD {
 

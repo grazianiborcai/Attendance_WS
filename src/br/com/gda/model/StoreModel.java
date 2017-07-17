@@ -14,10 +14,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import br.com.gda.dao.StoreDAO;
-import br.com.gda.helper.StoreEmployee;
-import br.com.gda.helper.MaterialStore;
-import br.com.gda.helper.RecordMode;
-import br.com.gda.helper.Store;
+import br.com.mind5.helper.MaterialStore;
+import br.com.mind5.helper.RecordMode;
+import br.com.mind5.helper.Store;
+import br.com.mind5.helper.StoreEmployee;
 
 public class StoreModel extends JsonBuilder {
 

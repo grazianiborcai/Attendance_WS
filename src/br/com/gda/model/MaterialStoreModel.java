@@ -12,9 +12,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import br.com.gda.dao.MaterialStoreDAO;
-import br.com.gda.helper.MaterialStore;
-import br.com.gda.helper.MaterialDetail;
-import br.com.gda.helper.RecordMode;
+import br.com.mind5.helper.MaterialDetail;
+import br.com.mind5.helper.MaterialStore;
+import br.com.mind5.helper.RecordMode;
 
 public class MaterialStoreModel extends JsonBuilder {
 

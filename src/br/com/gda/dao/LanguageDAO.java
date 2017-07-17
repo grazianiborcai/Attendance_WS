@@ -9,7 +9,7 @@ import java.util.List;
 
 import br.com.gda.dao.helper.LanguageHelper;
 import br.com.gda.db.ConnectionBD;
-import br.com.gda.helper.Language;
+import br.com.mind5.helper.Language;
 
 public class LanguageDAO extends ConnectionBD {
 

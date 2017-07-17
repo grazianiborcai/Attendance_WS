@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.gda.db.GdaDB;
-import br.com.gda.helper.TypeText;
+import br.com.mind5.helper.TypeText;
 
 public class TypeTextHelper extends GdaDB {
 

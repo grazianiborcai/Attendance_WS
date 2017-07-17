@@ -12,7 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import br.com.gda.dao.StateTextDAO;
-import br.com.gda.helper.StateText;
+import br.com.mind5.helper.StateText;
 
 public class StateTextModel extends JsonBuilder {
 

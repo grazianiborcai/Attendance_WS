@@ -21,9 +21,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import br.com.gda.dao.helper.PlanningTimeHelper;
 import br.com.gda.dao.helper.ReserveHelper;
 import br.com.gda.db.ConnectionBD;
-import br.com.gda.helper.PlanningTime;
-import br.com.gda.helper.RecordMode;
-import br.com.gda.helper.Reserve;
+import br.com.mind5.helper.PlanningTime;
+import br.com.mind5.helper.RecordMode;
+import br.com.mind5.helper.Reserve;
 
 public class PlanningTimeDAO extends ConnectionBD {
 

@@ -6,9 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.gda.db.GdaDB;
-import br.com.gda.helper.CurrencyBase;
-import br.com.gda.helper.ExchangeRate;
-//import br.com.gda.servlet.ServletContainerGDA;
+import br.com.mind5.helper.CurrencyBase;
+import br.com.mind5.helper.ExchangeRate;
 
 public class CurrencyHelper extends GdaDB {
 

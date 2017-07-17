@@ -9,7 +9,7 @@ import java.util.List;
 
 import br.com.gda.dao.helper.WeekdayHelper;
 import br.com.gda.db.ConnectionBD;
-import br.com.gda.helper.Weekday;
+import br.com.mind5.helper.Weekday;
 
 public class WeekdayDAO extends ConnectionBD {
 

@@ -9,14 +9,14 @@ import java.util.List;
 
 import br.com.gda.dao.helper.GenderTextHelper;
 import br.com.gda.db.ConnectionBD;
-import br.com.gda.helper.GenderText;
+import br.com.mind5.helper.Gender;
 
 public class GenderTextDAO extends ConnectionBD {
 
-	public ArrayList<GenderText> selectGenderText(List<Integer> codGender,
+	public ArrayList<Gender> selectGenderText(List<Integer> codGender,
 			List<String> language, List<String> name) throws SQLException {
 
-		ArrayList<GenderText> genderTextList = new ArrayList<GenderText>();
+		ArrayList<Gender> genderTextList = new ArrayList<Gender>();
 		Connection conn = null;
 		PreparedStatement selectStmt = null;
 		ResultSet resultSet = null;

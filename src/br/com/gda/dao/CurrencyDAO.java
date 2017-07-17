@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 import br.com.gda.dao.helper.CurrencyHelper;
 import br.com.gda.db.ConnectionBD;
-import br.com.gda.helper.CurrencyBase;
+import br.com.mind5.helper.CurrencyBase;
 
 public class CurrencyDAO extends ConnectionBD {
 

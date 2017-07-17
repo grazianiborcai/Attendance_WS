@@ -9,8 +9,8 @@ import java.util.List;
 
 import br.com.gda.dao.helper.MenuItemHelper;
 import br.com.gda.db.ConnectionBD;
-import br.com.gda.helper.MenuItem;
-import br.com.gda.helper.RecordMode;
+import br.com.mind5.helper.MenuItem;
+import br.com.mind5.helper.RecordMode;
 
 public class MenuItemDAO extends ConnectionBD {
 

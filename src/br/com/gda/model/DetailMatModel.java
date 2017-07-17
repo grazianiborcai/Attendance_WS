@@ -12,10 +12,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import br.com.gda.dao.DetailMatDAO;
-import br.com.gda.helper.DetailMat;
-import br.com.gda.helper.DetailMatItem;
-import br.com.gda.helper.MaterialDetail;
-import br.com.gda.helper.RecordMode;
+import br.com.mind5.helper.DetailMat;
+import br.com.mind5.helper.DetailMatItem;
+import br.com.mind5.helper.MaterialDetail;
+import br.com.mind5.helper.RecordMode;
 
 public class DetailMatModel extends JsonBuilder {
 

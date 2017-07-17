@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.gda.db.GdaDB;
-import br.com.gda.helper.Weekday;
+import br.com.mind5.helper.Weekday;
 
 public class WeekdayHelper extends GdaDB {
 

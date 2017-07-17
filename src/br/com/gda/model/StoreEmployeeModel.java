@@ -12,8 +12,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import br.com.gda.dao.StoreEmployeeDAO;
-import br.com.gda.helper.StoreEmployee;
-import br.com.gda.helper.RecordMode;
+import br.com.mind5.helper.RecordMode;
+import br.com.mind5.helper.StoreEmployee;
 
 public class StoreEmployeeModel extends JsonBuilder {
 

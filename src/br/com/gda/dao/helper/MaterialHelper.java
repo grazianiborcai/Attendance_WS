@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.gda.db.GdaDB;
-import br.com.gda.helper.Material;
-import br.com.gda.helper.RecordMode;
+import br.com.mind5.helper.Material;
+import br.com.mind5.helper.RecordMode;
 
 public class MaterialHelper extends GdaDB {
 

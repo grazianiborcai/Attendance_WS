@@ -12,11 +12,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import br.com.gda.dao.WeekdayTextDAO;
-import br.com.gda.helper.WeekdayText;
+import br.com.mind5.helper.Weekday;
 
 public class WeekdayTextModel extends JsonBuilder {
 
-	public ArrayList<WeekdayText> selectWeekdayText(List<Integer> weekday,
+	public ArrayList<Weekday> selectWeekdayText(List<Integer> weekday,
 			List<String> language, List<String> name) throws SQLException {
 
 		return new WeekdayTextDAO().selectWeekdayText(weekday, language,

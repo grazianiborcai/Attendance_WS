@@ -11,10 +11,10 @@ import br.com.gda.dao.helper.MaterialStoreHelper;
 import br.com.gda.dao.helper.StoreEmployeeHelper;
 import br.com.gda.dao.helper.StoreHelper;
 import br.com.gda.db.ConnectionBD;
-import br.com.gda.helper.StoreEmployee;
-import br.com.gda.helper.MaterialStore;
-import br.com.gda.helper.RecordMode;
-import br.com.gda.helper.Store;
+import br.com.mind5.helper.MaterialStore;
+import br.com.mind5.helper.RecordMode;
+import br.com.mind5.helper.Store;
+import br.com.mind5.helper.StoreEmployee;
 
 public class StoreDAO extends ConnectionBD {
 

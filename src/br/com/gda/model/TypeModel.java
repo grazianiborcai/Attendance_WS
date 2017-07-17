@@ -12,7 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import br.com.gda.dao.TypeDAO;
-import br.com.gda.helper.Type;
+import br.com.mind5.helper.Type;
 
 public class TypeModel extends JsonBuilder {
 

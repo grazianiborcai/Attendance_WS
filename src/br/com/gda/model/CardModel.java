@@ -14,9 +14,9 @@ import com.google.gson.JsonObject;
 import br.com.gda.dao.CardDAO;
 import br.com.gda.dao.CategoryDAO;
 import br.com.gda.dao.OwnerDAO;
-import br.com.gda.helper.Category;
-import br.com.gda.helper.CreditCardAG;
-import br.com.gda.helper.Owner;
+import br.com.mind5.helper.Category;
+import br.com.mind5.helper.CreditCardAG;
+import br.com.mind5.helper.Owner;
 
 public class CardModel extends JsonBuilder {
 

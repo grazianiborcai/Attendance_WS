@@ -15,8 +15,6 @@ import com.sun.jersey.spi.container.ContainerRequestFilter;
 
 import br.com.gda.dao.CustomerDAO;
 import br.com.gda.encrypt.MD5;
-import br.com.gda.helper.Customer;
-import br.com.gda.helper.Owner;
 import br.com.gda.model.OwnerModel;
 
 public class AuthFilter implements ContainerRequestFilter {

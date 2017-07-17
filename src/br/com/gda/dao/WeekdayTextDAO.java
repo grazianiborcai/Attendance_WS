@@ -9,14 +9,14 @@ import java.util.List;
 
 import br.com.gda.dao.helper.WeekdayTextHelper;
 import br.com.gda.db.ConnectionBD;
-import br.com.gda.helper.WeekdayText;
+import br.com.mind5.helper.Weekday;
 
 public class WeekdayTextDAO extends ConnectionBD {
 
-	public ArrayList<WeekdayText> selectWeekdayText(List<Integer> weekday,
+	public ArrayList<Weekday> selectWeekdayText(List<Integer> weekday,
 			List<String> language, List<String> name) throws SQLException {
 
-		ArrayList<WeekdayText> weekdayTextList = new ArrayList<WeekdayText>();
+		ArrayList<Weekday> weekdayTextList = new ArrayList<Weekday>();
 		Connection conn = null;
 		PreparedStatement selectStmt = null;
 		ResultSet resultSet = null;

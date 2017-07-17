@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 import br.com.gda.dao.helper.MaterialDetailHelper;
 import br.com.gda.dao.helper.MaterialHelper;
 import br.com.gda.db.ConnectionBD;
-import br.com.gda.helper.MaterialDetail;
-import br.com.gda.helper.RecordMode;
+import br.com.mind5.helper.MaterialDetail;
+import br.com.mind5.helper.RecordMode;
 
 public class MaterialDetailDAO extends ConnectionBD {
 

@@ -9,7 +9,7 @@ import java.util.List;
 
 import br.com.gda.dao.helper.PositionHelper;
 import br.com.gda.db.ConnectionBD;
-import br.com.gda.helper.Position;
+import br.com.mind5.helper.Position;
 
 public class PositionDAO extends ConnectionBD {
 

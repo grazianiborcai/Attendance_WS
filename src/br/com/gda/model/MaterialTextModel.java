@@ -14,7 +14,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import br.com.gda.dao.MaterialTextDAO;
-import br.com.gda.helper.MaterialText;
+import br.com.mind5.helper.MaterialText;
 
 public class MaterialTextModel extends JsonBuilder {
 

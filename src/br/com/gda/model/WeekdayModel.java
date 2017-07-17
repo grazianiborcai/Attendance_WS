@@ -12,7 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import br.com.gda.dao.WeekdayDAO;
-import br.com.gda.helper.Weekday;
+import br.com.mind5.helper.Weekday;
 
 public class WeekdayModel extends JsonBuilder {
 

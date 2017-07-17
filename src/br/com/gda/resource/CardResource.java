@@ -21,14 +21,14 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import br.com.gda.helper.CreditCardAG;
-import br.com.gda.helper.HolderAG;
-import br.com.gda.helper.PayCart;
-import br.com.gda.helper.TaxDocumentAG;
 import br.com.gda.model.CardModel;
 import br.com.gda.model.CustomerModel;
 import br.com.gda.model.JsonBuilder;
 import br.com.gda.model.PlanningTimeModel;
+import br.com.mind5.helper.CreditCardAG;
+import br.com.mind5.helper.HolderAG;
+import br.com.mind5.helper.PayCart;
+import br.com.mind5.helper.TaxDocumentAG;
 
 @Path("/Card")
 public class CardResource extends JsonBuilder {

@@ -10,8 +10,8 @@ import java.util.List;
 
 import br.com.gda.dao.helper.OwnerHelper;
 import br.com.gda.db.ConnectionBD;
-import br.com.gda.helper.Owner;
-import br.com.gda.helper.RecordMode;
+import br.com.mind5.helper.Owner;
+import br.com.mind5.helper.RecordMode;
 
 public class OwnerDAO extends ConnectionBD {
 

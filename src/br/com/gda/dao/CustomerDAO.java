@@ -11,8 +11,8 @@ import java.util.List;
 
 import br.com.gda.dao.helper.CustomerHelper;
 import br.com.gda.db.ConnectionBD;
-import br.com.gda.helper.Customer;
-import br.com.gda.helper.RecordMode;
+import br.com.mind5.helper.Customer;
+import br.com.mind5.helper.RecordMode;
 
 public class CustomerDAO extends ConnectionBD {
 

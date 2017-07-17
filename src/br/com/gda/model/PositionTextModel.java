@@ -12,7 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import br.com.gda.dao.PositionTextDAO;
-import br.com.gda.helper.PositionText;
+import br.com.mind5.helper.PositionText;
 
 public class PositionTextModel extends JsonBuilder {
 

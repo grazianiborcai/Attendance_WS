@@ -12,7 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import br.com.gda.dao.CategoryTextDAO;
-import br.com.gda.helper.CategoryText;
+import br.com.mind5.helper.CategoryText;
 
 public class CategoryTextModel extends JsonBuilder {
 

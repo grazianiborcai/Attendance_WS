@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.gda.db.GdaDB;
-import br.com.gda.helper.WeekdayText;
+import br.com.mind5.helper.Weekday;
 
 public class WeekdayTextHelper extends GdaDB {
 
@@ -19,9 +19,9 @@ public class WeekdayTextHelper extends GdaDB {
 	public static final String ST_SELECT = "SELECT * FROM " + SCHEMA + "."
 			+ TABLE;
 
-	public WeekdayText assignResult(ResultSet resultSet) throws SQLException {
+	public Weekday assignResult(ResultSet resultSet) throws SQLException {
 
-		WeekdayText weekdayText = new WeekdayText();
+		Weekday weekdayText = new Weekday();
 
 		weekdayText.setWeekday(resultSet.getInt(FIELD01));
 		weekdayText.setLanguage(resultSet.getString(FIELD02));

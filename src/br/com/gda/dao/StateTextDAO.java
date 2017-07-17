@@ -9,7 +9,7 @@ import java.util.List;
 
 import br.com.gda.dao.helper.StateTextHelper;
 import br.com.gda.db.ConnectionBD;
-import br.com.gda.helper.StateText;
+import br.com.mind5.helper.StateText;
 
 public class StateTextDAO extends ConnectionBD {
 

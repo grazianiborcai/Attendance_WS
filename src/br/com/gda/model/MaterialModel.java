@@ -16,9 +16,9 @@ import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataMultiPart;
 
 import br.com.gda.dao.MaterialDAO;
-import br.com.gda.helper.MaterialDetail;
-import br.com.gda.helper.Material;
-import br.com.gda.helper.RecordMode;
+import br.com.mind5.helper.Material;
+import br.com.mind5.helper.MaterialDetail;
+import br.com.mind5.helper.RecordMode;
 
 public class MaterialModel extends JsonBuilder {
 

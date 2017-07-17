@@ -21,8 +21,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import br.com.gda.dao.CustomerDAO;
-import br.com.gda.helper.Customer;
-import br.com.gda.helper.RecordMode;
+import br.com.mind5.helper.Customer;
+import br.com.mind5.helper.RecordMode;
 import moip.sdk.api.Phone;
 import moip.sdk.base.APIContext;
 

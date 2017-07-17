@@ -9,7 +9,7 @@ import java.util.List;
 
 import br.com.gda.dao.helper.TypeHelper;
 import br.com.gda.db.ConnectionBD;
-import br.com.gda.helper.Type;
+import br.com.mind5.helper.Type;
 
 public class TypeDAO extends ConnectionBD {
 

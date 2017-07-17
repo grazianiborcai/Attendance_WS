@@ -9,8 +9,8 @@ import java.util.List;
 
 import br.com.gda.dao.helper.MaterialTextHelper;
 import br.com.gda.db.ConnectionBD;
-import br.com.gda.helper.MaterialText;
-import br.com.gda.helper.RecordMode;
+import br.com.mind5.helper.MaterialText;
+import br.com.mind5.helper.RecordMode;
 
 public class MaterialTextDAO extends ConnectionBD {
 

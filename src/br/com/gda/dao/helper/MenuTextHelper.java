@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.gda.db.GdaDB;
-import br.com.gda.helper.MenuText;
+import br.com.mind5.helper.MenuText;
 
 public class MenuTextHelper extends GdaDB {
 

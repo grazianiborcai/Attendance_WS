@@ -9,7 +9,7 @@ import java.util.List;
 
 import br.com.gda.dao.helper.GenderHelper;
 import br.com.gda.db.ConnectionBD;
-import br.com.gda.helper.Gender;
+import br.com.mind5.helper.Gender;
 
 public class GenderDAO extends ConnectionBD {
 

@@ -14,7 +14,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import br.com.gda.dao.MenuItemTextDAO;
-import br.com.gda.helper.MenuItemText;
+import br.com.mind5.helper.MenuItemText;
 
 public class MenuItemTextModel extends JsonBuilder {
 

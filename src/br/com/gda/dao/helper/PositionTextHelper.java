@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.gda.db.GdaDB;
-import br.com.gda.helper.PositionText;
+import br.com.mind5.helper.PositionText;
 
 public class PositionTextHelper extends GdaDB {
 

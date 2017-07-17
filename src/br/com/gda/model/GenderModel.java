@@ -12,7 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import br.com.gda.dao.GenderDAO;
-import br.com.gda.helper.Gender;
+import br.com.mind5.helper.Gender;
 
 public class GenderModel extends JsonBuilder {
 

@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.gda.db.GdaDB;
-import br.com.gda.helper.CreditCardAG;
-import br.com.gda.helper.Customer;
+import br.com.mind5.helper.CreditCardAG;
+import br.com.mind5.helper.Customer;
 import moip.sdk.api.TaxDocument;
 
 public class CardHelper extends GdaDB {
