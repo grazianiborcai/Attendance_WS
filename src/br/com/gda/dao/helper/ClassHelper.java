@@ -85,7 +85,7 @@ public class ClassHelper extends GdaDB {
 	private List<String> prepareSelectWhere(Long peopleID) {
 		List<String> where = new ArrayList<String>();
 
-		singleFilter(where, TABLE + "." + FIELD01, EQ, peopleID);
+		singleFilter(where, EnrollmentHelper.TABLE + "." + EnrollmentHelper.FIELD03, EQ, peopleID);
 
 		return where;
 	}
@@ -94,7 +94,7 @@ public class ClassHelper extends GdaDB {
 
 		String stmt = ST_SELECT;
 
-		if (peopleID != null && peopleID.equals(Long.valueOf(0))) {
+		if (peopleID != null && !peopleID.equals(Long.valueOf(0))) {
 
 			List<String> where = prepareSelectWhere(peopleID);
 
