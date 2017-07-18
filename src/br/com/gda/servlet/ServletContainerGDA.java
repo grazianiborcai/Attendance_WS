@@ -19,6 +19,7 @@ import com.sun.jersey.spi.container.servlet.ServletContainer;
 
 import br.com.gda.mqtt.Publisher;
 
+@SuppressWarnings("unused")
 public class ServletContainerGDA extends ServletContainer {
 
 	/**

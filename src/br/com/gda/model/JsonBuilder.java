@@ -20,6 +20,7 @@ import com.google.gson.JsonParser;
 
 import br.com.gda.servlet.ServletContainerGDA;
 
+@SuppressWarnings("unused")
 public class JsonBuilder {
 
 	protected static final String OWNER = "Owner";
@@ -142,6 +143,7 @@ public class JsonBuilder {
 			public void run() {
 				for (Object eachTopic : topicList) {
 
+					
 					String fullTopic = null;
 					String methodAux = null;
 					switch (topic) {
@@ -198,6 +200,7 @@ public class JsonBuilder {
 						}
 					};
 
+					
 					JsonObject jsonObject = getJsonObjectSelect(
 							new Gson().toJsonTree(objectList.stream().filter(filter).collect(Collectors.toList())),
 							exception, process);

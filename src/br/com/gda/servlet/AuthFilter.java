@@ -13,10 +13,9 @@ import com.sun.jersey.core.header.InBoundHeaders;
 import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerRequestFilter;
 
-import br.com.gda.dao.CustomerDAO;
 import br.com.gda.encrypt.MD5;
-import br.com.gda.model.OwnerModel;
 
+@SuppressWarnings("unused")
 public class AuthFilter implements ContainerRequestFilter {
 
 	private static final String CLIENT_LOGIN = "client";
