@@ -6,9 +6,6 @@
         <dependent-module archiveName="attendance-metadata_lib-0.0.1-ATTMETALIB.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/attendance-metadata_lib/attendance-metadata_lib">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="Moip-Mind5-SDK-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/Moip-Mind5-SDK/Moip-Mind5-SDK">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <property name="context-root" value="Attendance_WS"/>
         <property name="java-output-path" value="/Attendance_WS/target/classes"/>
     </wb-module>
