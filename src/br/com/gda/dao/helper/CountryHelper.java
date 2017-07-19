@@ -21,7 +21,7 @@ public class CountryHelper extends GdaDB {
 
 		Country country = new Country();
 
-		country.setCountryID(resultSet.getInt(FIELD01));
+		country.setCountryID(resultSet.getString(FIELD01));
 		country.setCountryDesc(resultSet.getString(FIELD02));
 
 		return country;
