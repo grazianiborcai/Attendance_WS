@@ -35,7 +35,7 @@ public class EnrollmentDAO extends ConnectionBD {
 				for (People people : enrollment.getPeople()) {
 					insertStmt02.setString(1, people.getCountryID());
 					insertStmt02.setString(2, people.getRegionID());
-					insertStmt02.setInt(3, people.getGenderID());
+					insertStmt02.setInt(3, people.getGradeID());
 					insertStmt02.setString(4, people.getName());
 					if (people.getBirthDateS() != null)
 						insertStmt02.setDate(5, Date.valueOf(people.getBirthDateS()));

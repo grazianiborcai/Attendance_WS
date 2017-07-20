@@ -2,6 +2,8 @@ package br.com.gda.dao.helper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import br.com.gda.db.GdaDB;
 import br.com.mind5.helper.People;
@@ -43,6 +45,8 @@ public class PeopleHelper extends GdaDB {
 			+ FIELD22 + ", " + FIELD23 + ", " + FIELD24 + ", " + FIELD25 + ") "
 			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
+	public static final String ST_SELECT = "SELECT * FROM " + SCHEMA + "." + TABLE;
+
 	public People assignResult(ResultSet resultSet) throws SQLException {
 
 		People people = new People();
@@ -74,6 +78,29 @@ public class PeopleHelper extends GdaDB {
 		people.setEnrTypeID(resultSet.getInt(TABLE + "." + FIELD25));
 
 		return people;
+	}
+
+	private List<String> prepareSelectWhere(String email, String password) {
+		List<String> where = new ArrayList<String>();
+
+		singleFilter(where, TABLE + "." + FIELD09, EQ, email);
+		singleFilter(where, TABLE + "." + FIELD24, EQ, password);
+		singleFilter(where, TABLE + "." + FIELD25, EQ, 1);
+
+		return where;
+	}
+
+	public String prepareSelect(String email, String password) {
+
+		String stmt = ST_SELECT;
+
+		List<String> where = prepareSelectWhere(email, password);
+
+		stmt = prepareWhereClause(stmt, where);
+
+		stmt = stmt + " ORDER BY " + TABLE + "." + FIELD01 + ", " + TABLE + "." + FIELD02;
+
+		return stmt;
 	}
 
 }
