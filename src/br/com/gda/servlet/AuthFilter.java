@@ -43,11 +43,26 @@ public class AuthFilter implements ContainerRequestFilter {
 	 */
 	@Override
 	public ContainerRequest filter(ContainerRequest containerRequest) throws WebApplicationException {
-/*		// GET, POST, PUT, DELETE, ...
+		// GET, POST, PUT, DELETE, ...
 		String method = containerRequest.getMethod();
 		// Token/GetToken for example
 		String path = containerRequest.getPath(true);
-
+		
+		if (method.equals("GET") && path.equals("People/loginPeople")) {
+			String auth = containerRequest.getHeaderValue(AUTHORIZATION);
+			// lap : loginAndPassword
+			String[] lap = null;
+			lap = BasicAuth.decode(auth);
+			// If login or password fail
+			if (lap == null || lap.length != 2) {
+				throw new WebApplicationException(Status.UNAUTHORIZED);
+			}
+			InBoundHeaders header = new InBoundHeaders();
+			header.add(EMAIL, lap[0]);
+			header.add(PASSWORD, lap[1]);
+			containerRequest.setHeaders(header);
+		}
+/*
 		if (method.equals("DELETE")) {
 			throw new WebApplicationException(Status.UNAUTHORIZED);
 		}
@@ -77,7 +92,11 @@ public class AuthFilter implements ContainerRequestFilter {
 		if (zoneId == null || zoneId.isEmpty())
 			zoneId = "Z";
 
-		MD5 md5 = new MD5();
+		
+			MD5 md5 = new MD5();
+			
+
+		
 
 		// if (token == null || zoneId == null || !md5.isTokenValid(token, path,
 		// auth, zoneId)) {

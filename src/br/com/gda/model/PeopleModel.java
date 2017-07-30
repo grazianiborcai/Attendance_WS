@@ -1,7 +1,10 @@
 package br.com.gda.model;
 
 import java.sql.SQLException;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -22,7 +25,7 @@ public class PeopleModel extends JsonBuilder {
 		return new PeopleDAO().selectPeople(email, password);
 	}
 
-	public JsonObject selectPeopleJson(String email, String password) {
+	public JsonObject selectPeopleJson(String email, String password, String userAgent) {
 
 		JsonElement jsonElement = new JsonArray().getAsJsonArray();
 		SQLException exception = new SQLException(RETURNED_SUCCESSFULLY, null, 200);
@@ -38,6 +41,21 @@ public class PeopleModel extends JsonBuilder {
 				// exception = new SQLException(email+" : "+password+" :
 				// "+emailList.get(0), null, 200);
 			}
+			
+			for (People people : peopleList) {
+				
+				UUID uuid = UUID.randomUUID();
+				people.setoAuth(uuid.toString());
+				people.setoAuthDate(ZonedDateTime.now(ZoneOffset.UTC).toLocalDateTime());
+				people.setUserAgent(userAgent);
+				
+			}
+			
+			SQLException login = new PeopleDAO().updatePeople(peopleList);
+			
+			if (login.getErrorCode() != 200) {
+				throw new WebApplicationException(Status.EXPECTATION_FAILED);
+			}
 
 			jsonElement = new Gson().toJsonTree(peopleList);
 
@@ -50,9 +68,9 @@ public class PeopleModel extends JsonBuilder {
 		return jsonObject;
 	}
 
-	public Response selectPeopleResponse(String email, String password) {
+	public Response selectPeopleResponse(String email, String password, String userAgent) {
 
-		return response(selectPeopleJson(email, password));
+		return response(selectPeopleJson(email, password, userAgent));
 	}
 
 }

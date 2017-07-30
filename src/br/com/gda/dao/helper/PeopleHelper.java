@@ -37,6 +37,9 @@ public class PeopleHelper extends GdaDB {
 	public static final String FIELD23 = "LookOther";
 	public static final String FIELD24 = "Password";
 	public static final String FIELD25 = "EnrTypeID";
+	public static final String FIELD26 = "OAuth";
+	public static final String FIELD27 = "OAuthDate";
+	public static final String FIELD28 = "UserAgent";
 
 	public static final String ST_IN_ALL_FIELD = "INSERT INTO " + SCHEMA + "." + TABLE + " (" + FIELD02 + ", " + FIELD03
 			+ ", " + FIELD04 + ", " + FIELD05 + ", " + FIELD06 + ", " + FIELD07 + ", " + FIELD08 + ", " + FIELD09 + ", "
@@ -44,6 +47,9 @@ public class PeopleHelper extends GdaDB {
 			+ FIELD16 + ", " + FIELD17 + ", " + FIELD18 + ", " + FIELD19 + ", " + FIELD20 + ", " + FIELD21 + ", "
 			+ FIELD22 + ", " + FIELD23 + ", " + FIELD24 + ", " + FIELD25 + ") "
 			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+	public static final String ST_UP_OAUTH_BY_FULL_KEY = "UPDATE " + SCHEMA + "." + TABLE + " SET " + FIELD26 + "=?"
+			+ ", " + FIELD27 + "=?" + ", " + FIELD28 + "=?" + " WHERE " + FIELD01 + "=?";
 
 	public static final String ST_SELECT = "SELECT * FROM " + SCHEMA + "." + TABLE;
 
