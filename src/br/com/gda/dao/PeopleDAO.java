@@ -13,7 +13,7 @@ import br.com.mind5.helper.People;
 
 public class PeopleDAO extends ConnectionBD {
 
-	public ArrayList<People> selectPeople(String email, String password) throws SQLException {
+	public ArrayList<People> selectPeople(String email, String password, String oAuth) throws SQLException {
 
 		ArrayList<People> PeopleTextList = new ArrayList<People>();
 		Connection conn = null;
@@ -27,7 +27,7 @@ public class PeopleDAO extends ConnectionBD {
 
 			PeopleHelper peopleHelper = new PeopleHelper();
 
-			selectStmt = conn.prepareStatement(peopleHelper.prepareSelect(email, password));
+			selectStmt = conn.prepareStatement(peopleHelper.prepareSelect(email, password, oAuth));
 
 			resultSet = selectStmt.executeQuery();
 

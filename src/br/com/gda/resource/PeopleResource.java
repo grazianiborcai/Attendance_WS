@@ -14,15 +14,23 @@ import br.com.gda.model.PeopleModel;
 @Path("/People")
 public class PeopleResource {
 
-	private static final String SELECT_People_TEXT = "/loginPeople";
+	private static final String LOGIN_PEOPLE = "/loginPeople";
+	private static final String SELECT_PEOPLE = "/selectPeople";
 
 	@GET
-	@Path(SELECT_People_TEXT)
+	@Path(LOGIN_PEOPLE)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response loginPeople(@HeaderParam("email") String email, @HeaderParam("password") String password,
 			@HeaderParam("user-agent") String userAgent, @Context HttpServletRequest request) {
 		//System.out.println(request.getRemoteHost());
 		return new PeopleModel().selectPeopleResponse(email, password, userAgent);
+	}
+	
+	@GET
+	@Path(SELECT_PEOPLE)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response selectPeople(@HeaderParam("oAuth") String oAuth) {
+		return new PeopleModel().selectPeopleResponse(oAuth);
 	}
 
 }

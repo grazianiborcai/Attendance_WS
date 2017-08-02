@@ -20,9 +20,9 @@ import br.com.mind5.helper.People;
 
 public class PeopleModel extends JsonBuilder {
 
-	public ArrayList<People> selectPeople(String email, String password) throws SQLException {
+	public ArrayList<People> selectPeople(String email, String password, String oAuth) throws SQLException {
 
-		return new PeopleDAO().selectPeople(email, password);
+		return new PeopleDAO().selectPeople(email, password, oAuth);
 	}
 
 	public JsonObject selectPeopleJson(String email, String password, String userAgent) {
@@ -34,7 +34,7 @@ public class PeopleModel extends JsonBuilder {
 
 		try {
 
-			peopleList = selectPeople(email, password);
+			peopleList = selectPeople(email, password, null);
 
 			if (peopleList == null || peopleList.size() == 0) {
 				throw new WebApplicationException(Status.UNAUTHORIZED);
@@ -71,6 +71,37 @@ public class PeopleModel extends JsonBuilder {
 	public Response selectPeopleResponse(String email, String password, String userAgent) {
 
 		return response(selectPeopleJson(email, password, userAgent));
+	}
+	
+	public JsonObject selectPeopleJson(String oAuth) {
+
+		JsonElement jsonElement = new JsonArray().getAsJsonArray();
+		SQLException exception = new SQLException(RETURNED_SUCCESSFULLY, null, 200);
+
+		ArrayList<People> peopleList = new ArrayList<People>();
+
+		try {
+
+			peopleList = selectPeople(null, null, oAuth);
+
+			if (peopleList == null || peopleList.size() == 0) {
+				throw new WebApplicationException(Status.UNAUTHORIZED);
+			}
+
+			jsonElement = new Gson().toJsonTree(peopleList);
+
+		} catch (SQLException e) {
+			exception = e;
+		}
+
+		JsonObject jsonObject = getJsonObjectSelect(jsonElement, exception);
+
+		return jsonObject;
+	}
+
+	public Response selectPeopleResponse(String oAuth) {
+
+		return response(selectPeopleJson(null, null, oAuth));
 	}
 
 }

@@ -86,21 +86,22 @@ public class PeopleHelper extends GdaDB {
 		return people;
 	}
 
-	private List<String> prepareSelectWhere(String email, String password) {
+	private List<String> prepareSelectWhere(String email, String password, String oAuth) {
 		List<String> where = new ArrayList<String>();
 
 		singleFilter(where, TABLE + "." + FIELD09, EQ, email);
 		singleFilter(where, TABLE + "." + FIELD24, EQ, password);
+		singleFilter(where, TABLE + "." + FIELD26, EQ, oAuth);
 		singleFilter(where, TABLE + "." + FIELD25, EQ, 1);
 
 		return where;
 	}
 
-	public String prepareSelect(String email, String password) {
+	public String prepareSelect(String email, String password, String oAuth) {
 
 		String stmt = ST_SELECT;
 
-		List<String> where = prepareSelectWhere(email, password);
+		List<String> where = prepareSelectWhere(email, password, oAuth);
 
 		stmt = prepareWhereClause(stmt, where);
 
