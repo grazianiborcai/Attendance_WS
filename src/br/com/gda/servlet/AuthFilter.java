@@ -34,6 +34,7 @@ public class AuthFilter implements ContainerRequestFilter {
 	private static final String CPF = "cpf";
 	private static final String EMAIL = "email";
 	private static final String EMAIL_LOGIN = "emailLogin";
+	private static final String USER_AGENT = "user-agent";
 
 	/**
 	 * Apply the filter : check input request, validate or not with user auth
@@ -57,9 +58,11 @@ public class AuthFilter implements ContainerRequestFilter {
 			if (lap == null || lap.length != 2) {
 				throw new WebApplicationException(Status.UNAUTHORIZED);
 			}
+			String userSgent = containerRequest.getHeaderValue(USER_AGENT);
 			InBoundHeaders header = new InBoundHeaders();
 			header.add(EMAIL, lap[0]);
 			header.add(PASSWORD, lap[1]);
+			header.add(USER_AGENT, userSgent);
 			containerRequest.setHeaders(header);
 		}
 /*

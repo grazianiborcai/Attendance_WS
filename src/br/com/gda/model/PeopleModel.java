@@ -101,7 +101,7 @@ public class PeopleModel extends JsonBuilder {
 
 	public Response selectPeopleResponse(String oAuth) {
 
-		return response(selectPeopleJson(null, null, oAuth));
+		return response(selectPeopleJson(oAuth));
 	}
 
 }

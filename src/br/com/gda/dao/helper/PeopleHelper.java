@@ -2,6 +2,7 @@ package br.com.gda.dao.helper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,6 +83,8 @@ public class PeopleHelper extends GdaDB {
 		people.setLookingOther(resultSet.getString(TABLE + "." + FIELD23));
 		people.setPassword(resultSet.getString(TABLE + "." + FIELD24));
 		people.setEnrTypeID(resultSet.getInt(TABLE + "." + FIELD25));
+		people.setoAuth(resultSet.getString(TABLE + "." + FIELD26));
+		people.setUserAgent(resultSet.getString(TABLE + "." + FIELD28));
 
 		return people;
 	}
