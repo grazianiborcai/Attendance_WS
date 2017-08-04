@@ -14,6 +14,7 @@ import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerRequestFilter;
 
 import br.com.gda.encrypt.MD5;
+import br.com.gda.model.PeopleModel;
 
 @SuppressWarnings("unused")
 public class AuthFilter implements ContainerRequestFilter {
@@ -35,6 +36,7 @@ public class AuthFilter implements ContainerRequestFilter {
 	private static final String EMAIL = "email";
 	private static final String EMAIL_LOGIN = "emailLogin";
 	private static final String USER_AGENT = "user-agent";
+	private static final String OAUTH = "oAuth";
 
 	/**
 	 * Apply the filter : check input request, validate or not with user auth
@@ -64,6 +66,9 @@ public class AuthFilter implements ContainerRequestFilter {
 			header.add(PASSWORD, lap[1]);
 			header.add(USER_AGENT, userSgent);
 			containerRequest.setHeaders(header);
+		} else if (!path.equals("People/selectPeople")) {
+			String oAuth = containerRequest.getHeaderValue(OAUTH);
+			new PeopleModel().selectPeopleJson(oAuth);
 		}
 /*
 		if (method.equals("DELETE")) {
